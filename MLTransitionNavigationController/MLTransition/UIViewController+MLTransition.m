@@ -171,7 +171,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         }else if (velocity < -kMLTransitionConstant_Valid_MIN_Velocity){ //向左速率太快就取消
             [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
         }else{
-            if (progress < 0.1) {
+            if (progress < 0.2) {
                 [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
             }else if (progress > 0.7) {
                 [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
