@@ -177,10 +177,11 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
                 [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
             }else{
                 //在中间区域，如果向左速率稍大，就取消，否则就完成
-                NSLog(@"%f",velocity);
-                if (velocity < -10.0f) {
+                if (velocity < -5.0f) {
+                    self.percentDrivenInteractivePopTransition.completionSpeed /= 3.5;
                     [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
                 }else{
+                    self.percentDrivenInteractivePopTransition.completionSpeed /= 2.5;
                     [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
                 }
             }
