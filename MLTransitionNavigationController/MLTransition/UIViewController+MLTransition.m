@@ -148,7 +148,9 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         if (operation == UINavigationControllerOperationPop) {
             return [[MLTransitionFromRightToLeft alloc]init];
         }else{
-            return [[MLTransitionFromLeftToRight alloc]init];
+            //发现自定义的会很卡，这里需求和系统的效果一样，就默认使用系统的吧
+            return nil;
+//            return [[MLTransitionFromLeftToRight alloc]init];
         }
     }else {
         return nil;
@@ -210,10 +212,10 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
             }else{
                 //在中间区域，如果向左速率稍大，就取消，否则就完成
                 if (velocity < -5.0f) {
-                    self.percentDrivenInteractivePopTransition.completionSpeed /= 3.0f;
+                    self.percentDrivenInteractivePopTransition.completionSpeed /= 2.0f;
                     [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
                 }else{
-                    self.percentDrivenInteractivePopTransition.completionSpeed /= 1.8f;
+                    self.percentDrivenInteractivePopTransition.completionSpeed /= 1.5f;
                     [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
                 }
             }
