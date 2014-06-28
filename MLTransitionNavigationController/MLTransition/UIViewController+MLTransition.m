@@ -168,21 +168,20 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         
         if (velocity > kMLTransitionConstant_Valid_MIN_Velocity) { //向右速率太快就完成
             [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
+        }else if (velocity < -kMLTransitionConstant_Valid_MIN_Velocity){ //向左速率太快就取消
+            [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
         }else{
-            //如果在前半块，就取消
-            if (progress <= 0.5) {
+            if (progress < 0.1) {
                 [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
+            }else if (progress > 0.7) {
+                [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
             }else{
-                //如果在最后0.3位置，就完成
-                if (progress > 0.7) {
-                    [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
+                //在中间区域，如果向左速率稍大，就取消，否则就完成
+                NSLog(@"%f",velocity);
+                if (velocity < -10.0f) {
+                    [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
                 }else{
-                    //如果最后拖曳方向是往回的，还是取消，这里其实是在0.5-0.7之间了
-                    if (velocity < 0.0f) {
-                        [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
-                    }else{
-                        [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
-                    }
+                    [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
                 }
             }
         }

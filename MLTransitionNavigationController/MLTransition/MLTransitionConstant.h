@@ -11,7 +11,7 @@
 #define MLTransitionConstant_h
 
 //通常意义上的动画时间
-#define kMLTransitionConstant_TransitionDuration 0.25f
+#define kMLTransitionConstant_TransitionDuration 0.20f
 
 //左VC移动的长度和其整个宽度的比例
 #define kMLTransitionConstant_LeftVC_Move_Ratio_Of_Width 0.3f

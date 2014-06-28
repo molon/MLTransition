@@ -46,7 +46,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qZ7-5z-UXy">
-                                <rect key="frame" x="114" y="209" width="93" height="30"/>
+                                <rect key="frame" x="114" y="245" width="93" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="UIg-Xn-mgK"/>
@@ -62,7 +62,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="qZ7-5z-UXy" firstAttribute="top" secondItem="rIl-St-ual" secondAttribute="bottom" constant="14" id="F8J-tU-B9i"/>
+                            <constraint firstItem="qZ7-5z-UXy" firstAttribute="top" secondItem="rIl-St-ual" secondAttribute="bottom" constant="50" id="F8J-tU-B9i"/>
                             <constraint firstAttribute="centerX" secondItem="qZ7-5z-UXy" secondAttribute="centerX" id="JYI-3o-6If"/>
                             <constraint firstItem="rIl-St-ual" firstAttribute="top" secondItem="zXa-Gu-ps7" secondAttribute="bottom" constant="101" id="lsy-S5-Kd2"/>
                             <constraint firstAttribute="centerX" secondItem="rIl-St-ual" secondAttribute="centerX" id="mHJ-ea-OTh"/>

@@ -40,7 +40,7 @@
     
     CGRect toVC_toFrame = fromVC.view.frame; //也就是当前fromVC.view所在位置
     
-    [UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveLinear animations:^{
+    [UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
         fromVC.view.frame = fromVC_toFrame;
         toVC.view.frame = toVC_toFrame;
     } completion:^(BOOL finished) {
