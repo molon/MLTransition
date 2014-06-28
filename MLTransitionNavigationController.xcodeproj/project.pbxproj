@@ -26,6 +26,7 @@
 		365ED710195E94FC00B45D30 /* MLTransitionFromLeftToRight.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED70B195E94FC00B45D30 /* MLTransitionFromLeftToRight.m */; };
 		365ED711195E94FC00B45D30 /* MLTransitionFromRightToLeft.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED70D195E94FC00B45D30 /* MLTransitionFromRightToLeft.m */; };
 		365ED712195E94FC00B45D30 /* UIViewController+MLTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */; };
+		365ED72A195EC36600B45D30 /* MLTransition.gif in Resources */ = {isa = PBXBuildFile; fileRef = 365ED729195EC36600B45D30 /* MLTransition.gif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		365ED70D195E94FC00B45D30 /* MLTransitionFromRightToLeft.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLTransitionFromRightToLeft.m; sourceTree = "<group>"; };
 		365ED70E195E94FC00B45D30 /* UIViewController+MLTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MLTransition.h"; sourceTree = "<group>"; };
 		365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MLTransition.m"; sourceTree = "<group>"; };
+		365ED729195EC36600B45D30 /* MLTransition.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = MLTransition.gif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 		3623A1F6195E527600765ABF = {
 			isa = PBXGroup;
 			children = (
+				365ED729195EC36600B45D30 /* MLTransition.gif */,
 				3623A208195E527600765ABF /* MLTransitionNavigationController */,
 				3623A227195E527600765ABF /* MLTransitionNavigationControllerTests */,
 				3623A201195E527600765ABF /* Frameworks */,
@@ -262,6 +265,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				365ED72A195EC36600B45D30 /* MLTransition.gif in Resources */,
 				3623A21B195E527600765ABF /* Images.xcassets in Resources */,
 				3623A20D195E527600765ABF /* InfoPlist.strings in Resources */,
 				3623A216195E527600765ABF /* Main.storyboard in Resources */,
