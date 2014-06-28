@@ -54,7 +54,13 @@
     self.view.backgroundColor = bkgColor;
     [self.view addSubview:self.button];
     
-    self.title = @"ML_VC";
+    //测试自定义头部内容
+    UILabel *label = [[UILabel alloc]init];
+    label.text = @"ML_VC";
+    [label sizeToFit];
+    label.backgroundColor = [UIColor yellowColor];
+    self.navigationItem.titleView = label;
+    
     
     //测试自定义返回按钮会不会影响拖返。PS:默认系统的是会影响的
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];

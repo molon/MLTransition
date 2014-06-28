@@ -28,25 +28,23 @@
     
     fromVC.view.layer.shadowOpacity = kMLTransitionConstant_RightVC_ShadowOpacity;
     
-    //设置初始值，即fromVC原位置，toVC的frame.orgin.x在其-宽度*0.3的位置
-    CGRect toVCFrame = fromVC.view.frame;
-    toVCFrame.origin.x = -CGRectGetWidth(toVCFrame)*kMLTransitionConstant_LeftVC_Move_Ratio_Of_Width;
-    toVC.view.frame = toVCFrame;
+    //放进容器
     [containerView insertSubview:toVC.view belowSubview:fromVC.view];
     
-    //设置两者目的frame
-    CGRect fromVC_toFrame = fromVC.view.frame;
-    fromVC_toFrame.origin.x += CGRectGetWidth(fromVC_toFrame); //当前占用位置的右边
-    
-    CGRect toVC_toFrame = fromVC.view.frame; //也就是当前fromVC.view所在位置
+    //设置初始值
+    toVC.view.transform = CGAffineTransformMakeTranslation(-toVC.view.frame.size.width*kMLTransitionConstant_LeftVC_Move_Ratio_Of_Width, 0);
     
     [UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        fromVC.view.frame = fromVC_toFrame;
-        toVC.view.frame = toVC_toFrame;
+        fromVC.view.transform = CGAffineTransformMakeTranslation(fromVC.view.frame.size.width, 0);
+        toVC.view.transform = CGAffineTransformIdentity;
     } completion:^(BOOL finished) {
         fromVC.view.layer.shadowOpacity = 0.0f;
         
         [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
+        
+        
+        fromVC.view.transform = CGAffineTransformIdentity; //重置回来,两个都重置是因为动画可能会被取消
+        toVC.view.transform = CGAffineTransformIdentity;
     }];
 }
 

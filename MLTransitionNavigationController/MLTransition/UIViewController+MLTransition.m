@@ -143,7 +143,9 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 - (void)__MLTransition_HandlePopRecognizer:(UIScreenEdgePanGestureRecognizer*)recognizer {
     //如果没有导航器或者是导航器第一个就忽略
     if (recognizer.state == UIGestureRecognizerStateBegan) {
-        if (!self.navigationController||[self.navigationController.viewControllers[0] isEqual:self]) {
+        if (!self.navigationController||
+            [self.navigationController.transitionCoordinator isAnimated]||
+            self.navigationController.viewControllers.count < 2) {
             return;
         }
     }
