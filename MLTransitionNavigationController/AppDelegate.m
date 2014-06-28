@@ -7,12 +7,15 @@
 //
 
 #import "AppDelegate.h"
-
+#import "UIViewController+MLTransition.h"
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    [UIViewController validateWithMLTransitionGestureRecognizerType:MLTransitionGestureRecognizerTypePan];
+    
     return YES;
 }
 							

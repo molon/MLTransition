@@ -21,6 +21,11 @@
 		3623A224195E527600765ABF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3623A206195E527600765ABF /* UIKit.framework */; };
 		3623A22C195E527600765ABF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3623A22A195E527600765ABF /* InfoPlist.strings */; };
 		3623A22E195E527600765ABF /* MLTransitionNavigationControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3623A22D195E527600765ABF /* MLTransitionNavigationControllerTests.m */; };
+		365ED6FC195E5B1700B45D30 /* TempViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED6FB195E5B1700B45D30 /* TempViewController.m */; };
+		365ED707195E93AF00B45D30 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 365ED706195E93AF00B45D30 /* MobileCoreServices.framework */; };
+		365ED710195E94FC00B45D30 /* MLTransitionFromLeftToRight.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED70B195E94FC00B45D30 /* MLTransitionFromLeftToRight.m */; };
+		365ED711195E94FC00B45D30 /* MLTransitionFromRightToLeft.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED70D195E94FC00B45D30 /* MLTransitionFromRightToLeft.m */; };
+		365ED712195E94FC00B45D30 /* UIViewController+MLTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +58,16 @@
 		3623A229195E527600765ABF /* MLTransitionNavigationControllerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MLTransitionNavigationControllerTests-Info.plist"; sourceTree = "<group>"; };
 		3623A22B195E527600765ABF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3623A22D195E527600765ABF /* MLTransitionNavigationControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLTransitionNavigationControllerTests.m; sourceTree = "<group>"; };
+		365ED6FA195E5B1700B45D30 /* TempViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TempViewController.h; sourceTree = "<group>"; };
+		365ED6FB195E5B1700B45D30 /* TempViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TempViewController.m; sourceTree = "<group>"; };
+		365ED706195E93AF00B45D30 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		365ED709195E94FC00B45D30 /* MLTransitionConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLTransitionConstant.h; sourceTree = "<group>"; };
+		365ED70A195E94FC00B45D30 /* MLTransitionFromLeftToRight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLTransitionFromLeftToRight.h; sourceTree = "<group>"; };
+		365ED70B195E94FC00B45D30 /* MLTransitionFromLeftToRight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLTransitionFromLeftToRight.m; sourceTree = "<group>"; };
+		365ED70C195E94FC00B45D30 /* MLTransitionFromRightToLeft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLTransitionFromRightToLeft.h; sourceTree = "<group>"; };
+		365ED70D195E94FC00B45D30 /* MLTransitionFromRightToLeft.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLTransitionFromRightToLeft.m; sourceTree = "<group>"; };
+		365ED70E195E94FC00B45D30 /* UIViewController+MLTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MLTransition.h"; sourceTree = "<group>"; };
+		365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MLTransition.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				365ED707195E93AF00B45D30 /* MobileCoreServices.framework in Frameworks */,
 				3623A205195E527600765ABF /* CoreGraphics.framework in Frameworks */,
 				3623A207195E527600765ABF /* UIKit.framework in Frameworks */,
 				3623A203195E527600765ABF /* Foundation.framework in Frameworks */,
@@ -101,6 +117,7 @@
 		3623A201195E527600765ABF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				365ED706195E93AF00B45D30 /* MobileCoreServices.framework */,
 				3623A202195E527600765ABF /* Foundation.framework */,
 				3623A204195E527600765ABF /* CoreGraphics.framework */,
 				3623A206195E527600765ABF /* UIKit.framework */,
@@ -112,11 +129,14 @@
 		3623A208195E527600765ABF /* MLTransitionNavigationController */ = {
 			isa = PBXGroup;
 			children = (
+				365ED708195E94FC00B45D30 /* MLTransition */,
 				3623A211195E527600765ABF /* AppDelegate.h */,
 				3623A212195E527600765ABF /* AppDelegate.m */,
 				3623A214195E527600765ABF /* Main.storyboard */,
 				3623A217195E527600765ABF /* ViewController.h */,
 				3623A218195E527600765ABF /* ViewController.m */,
+				365ED6FA195E5B1700B45D30 /* TempViewController.h */,
+				365ED6FB195E5B1700B45D30 /* TempViewController.m */,
 				3623A21A195E527600765ABF /* Images.xcassets */,
 				3623A209195E527600765ABF /* Supporting Files */,
 			);
@@ -150,6 +170,20 @@
 				3623A22A195E527600765ABF /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		365ED708195E94FC00B45D30 /* MLTransition */ = {
+			isa = PBXGroup;
+			children = (
+				365ED709195E94FC00B45D30 /* MLTransitionConstant.h */,
+				365ED70A195E94FC00B45D30 /* MLTransitionFromLeftToRight.h */,
+				365ED70B195E94FC00B45D30 /* MLTransitionFromLeftToRight.m */,
+				365ED70C195E94FC00B45D30 /* MLTransitionFromRightToLeft.h */,
+				365ED70D195E94FC00B45D30 /* MLTransitionFromRightToLeft.m */,
+				365ED70E195E94FC00B45D30 /* UIViewController+MLTransition.h */,
+				365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */,
+			);
+			path = MLTransition;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,9 +283,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				365ED711195E94FC00B45D30 /* MLTransitionFromRightToLeft.m in Sources */,
+				365ED710195E94FC00B45D30 /* MLTransitionFromLeftToRight.m in Sources */,
+				365ED6FC195E5B1700B45D30 /* TempViewController.m in Sources */,
 				3623A219195E527600765ABF /* ViewController.m in Sources */,
 				3623A213195E527600765ABF /* AppDelegate.m in Sources */,
 				3623A20F195E527600765ABF /* main.m in Sources */,
+				365ED712195E94FC00B45D30 /* UIViewController+MLTransition.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +494,7 @@
 				3623A233195E527600765ABF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3623A234195E527600765ABF /* Build configuration list for PBXNativeTarget "MLTransitionNavigationControllerTests" */ = {
 			isa = XCConfigurationList;
@@ -464,6 +503,7 @@
 				3623A236195E527600765ABF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
