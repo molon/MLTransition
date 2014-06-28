@@ -14,6 +14,8 @@
 
 NSString * const kMLTransition_PercentDrivenInteractivePopTransition = @"__MLTransition_PercentDrivenInteractivePopTransition";
 
+NSString * const kMLTransition_GestureRecognizer = @"__MLTransition_GestureRecognizer";
+
 //设置一个默认的全局使用的type
 static MLTransitionGestureRecognizerType __MLTransitionGestureRecognizerType = MLTransitionGestureRecognizerTypePan;
 
@@ -44,9 +46,10 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 	}
 }
 
-@interface UIViewController ()
+@interface UIViewController ()<UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UIPercentDrivenInteractiveTransition *percentDrivenInteractivePopTransition;
+@property (nonatomic, strong) UIGestureRecognizer *MLTransition_gestureRecognizer;
 
 @end
 
@@ -80,17 +83,40 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 	return objc_getAssociatedObject(self, &kMLTransition_PercentDrivenInteractivePopTransition);
 }
 
+- (void)setMLTransition_gestureRecognizer:(UIGestureRecognizer *)MLTransition_gestureRecognizer
+{
+    [self willChangeValueForKey:kMLTransition_GestureRecognizer];
+	objc_setAssociatedObject(self, &kMLTransition_GestureRecognizer, MLTransition_gestureRecognizer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self didChangeValueForKey:kMLTransition_GestureRecognizer];
+}
+
+- (UIGestureRecognizer *)MLTransition_gestureRecognizer
+{
+	return objc_getAssociatedObject(self, &kMLTransition_GestureRecognizer);
+}
+
 #pragma mark - hook
 - (void)__MLTransition_Hook_ViewDidLoad
 {
     [self __MLTransition_Hook_ViewDidLoad];
     
-    if (__MLTransitionGestureRecognizerType == MLTransitionGestureRecognizerTypeScreenEdgePan) {
-        UIScreenEdgePanGestureRecognizer *gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(__MLTransition_HandlePopRecognizer:)];
-        gestureRecognizer.edges = UIRectEdgeLeft;
+    if ([self isKindOfClass:[UINavigationController class]]) {
+        return;
+    }
+    
+    if (!self.MLTransition_gestureRecognizer) {
+        UIGestureRecognizer *gestureRecognizer = nil;
+        if (__MLTransitionGestureRecognizerType == MLTransitionGestureRecognizerTypeScreenEdgePan) {
+            gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(__MLTransition_HandlePopRecognizer:)];
+            ((UIScreenEdgePanGestureRecognizer*)gestureRecognizer).edges = UIRectEdgeLeft;
+        }else{
+            gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(__MLTransition_HandlePopRecognizer:)];
+        }
+        
+        gestureRecognizer.delegate = self;
+        
+        self.MLTransition_gestureRecognizer = gestureRecognizer;
         [self.view addGestureRecognizer:gestureRecognizer];
-    }else{
-        [self.view addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(__MLTransition_HandlePopRecognizer:)]];
     }
 }
 
@@ -140,12 +166,16 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 }
 
 #pragma mark - UIGestureRecognizer handlers
-- (void)__MLTransition_HandlePopRecognizer:(UIScreenEdgePanGestureRecognizer*)recognizer {
+- (void)__MLTransition_HandlePopRecognizer:(UIPanGestureRecognizer*)recognizer {
     //如果没有导航器或者是导航器第一个就忽略
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         if (!self.navigationController||
             [self.navigationController.transitionCoordinator isAnimated]||
             self.navigationController.viewControllers.count < 2) {
+            return;
+        }
+    }else{
+        if (!self.percentDrivenInteractivePopTransition) {
             return;
         }
     }
@@ -161,10 +191,10 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         //建立一个transition的百分比控制对象
         self.percentDrivenInteractivePopTransition = [[UIPercentDrivenInteractiveTransition alloc] init];
         [self.navigationController popViewControllerAnimated:YES];
-    }else if (recognizer.state == UIGestureRecognizerStateChanged&&self.percentDrivenInteractivePopTransition) {
+    }else if (recognizer.state == UIGestureRecognizerStateChanged) {
         //根据拖动调整transition状态
         [self.percentDrivenInteractivePopTransition updateInteractiveTransition:progress];
-    }else if ((recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)&&self.percentDrivenInteractivePopTransition) {
+    }else if ((recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)) {
         //结束或者取消了手势，根据方向和速率来判断应该完成transition还是取消transition
         CGFloat velocity = [recognizer velocityInView:self.view].x; //我们只关心x的速率
         
@@ -183,7 +213,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
                     self.percentDrivenInteractivePopTransition.completionSpeed /= 3.0f;
                     [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
                 }else{
-                    self.percentDrivenInteractivePopTransition.completionSpeed /= 2.0f;
+                    self.percentDrivenInteractivePopTransition.completionSpeed /= 1.8f;
                     [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
                 }
             }
@@ -193,6 +223,28 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     
 }
 
-
+//这个玩意有可能会被一些需求中子类覆盖，但无妨，__MLTransition_HandlePopRecognizer也做了些处理
+//直接在这处理的话对性能有好处。
+- (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer
+{
+    if (![gestureRecognizer isEqual:self.MLTransition_gestureRecognizer]) {
+        return YES;
+    }
+    
+    if (!self.navigationController||
+        [self.navigationController.transitionCoordinator isAnimated]||
+        self.navigationController.viewControllers.count < 2) {
+        return NO;
+    }
+    
+    CGFloat progress = [gestureRecognizer translationInView:self.view].x / (self.view.bounds.size.width * 1.0f);
+    progress = MIN(1.0, MAX(0.0, progress));
+    if (progress<=0) {
+        return NO;
+    }
+    
+    return YES;
+    
+}
 
 @end
