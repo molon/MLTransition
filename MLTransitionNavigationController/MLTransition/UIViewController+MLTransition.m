@@ -171,17 +171,17 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         }else if (velocity < -kMLTransitionConstant_Valid_MIN_Velocity){ //向左速率太快就取消
             [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
         }else{
-            if (progress < 0.2) {
+            if (progress < 0.2f) {
                 [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
-            }else if (progress > 0.7) {
+            }else if (progress > 0.7f) {
                 [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
             }else{
                 //在中间区域，如果向左速率稍大，就取消，否则就完成
                 if (velocity < -5.0f) {
-                    self.percentDrivenInteractivePopTransition.completionSpeed /= 3.5;
+                    self.percentDrivenInteractivePopTransition.completionSpeed /= 3.0f;
                     [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
                 }else{
-                    self.percentDrivenInteractivePopTransition.completionSpeed /= 2.5;
+                    self.percentDrivenInteractivePopTransition.completionSpeed /= 2.0f;
                     [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
                 }
             }
