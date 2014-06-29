@@ -18,7 +18,7 @@
     // Override point for customization after application launch.
     
 #warning 此句来启用即可，要放到开始处哦
-    [UIViewController validateWithMLTransitionGestureRecognizerType:MLTransitionGestureRecognizerTypePan];
+    [UIViewController validatePanPackWithMLTransitionGestureRecognizerType:MLTransitionGestureRecognizerTypePan];
     
     return YES;
 }

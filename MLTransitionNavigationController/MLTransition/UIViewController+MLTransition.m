@@ -8,9 +8,10 @@
 
 #import "UIViewController+MLTransition.h"
 #import <objc/runtime.h>
-#import "MLTransitionFromRightToLeft.h"
-#import "MLTransitionFromLeftToRight.h"
-#import "MLTransitionConstant.h"
+#import "MLTransitionAnimation.h"
+
+//有效的向右拖动的最小速率，即为大于这个速率就认为想返回上一页罢了
+#define kMLTransitionConstant_Valid_MIN_Velocity 300.0f
 
 NSString * const kMLTransition_PercentDrivenInteractivePopTransition = @"__MLTransition_PercentDrivenInteractivePopTransition";
 
@@ -56,7 +57,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 @implementation UIViewController (MLTransition)
 
 #pragma mark - outside call
-+ (void)validateWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type
++ (void)validatePanPackWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type
 {
     //整个程序的生命周期只允许执行一次
     static dispatch_once_t onceToken;
@@ -109,11 +110,12 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         if (__MLTransitionGestureRecognizerType == MLTransitionGestureRecognizerTypeScreenEdgePan) {
             gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(__MLTransition_HandlePopRecognizer:)];
             ((UIScreenEdgePanGestureRecognizer*)gestureRecognizer).edges = UIRectEdgeLeft;
+            //这玩意不需要走delegate，走了还麻烦
         }else{
             gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(__MLTransition_HandlePopRecognizer:)];
+            gestureRecognizer.delegate = self;
         }
         
-        gestureRecognizer.delegate = self;
         
         self.MLTransition_gestureRecognizer = gestureRecognizer;
         [self.view addGestureRecognizer:gestureRecognizer];
@@ -124,6 +126,8 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     [self __MLTransition_Hook_ViewDidAppear:animated];
     
     if (![self isKindOfClass:[UINavigationController class]]) {
+//经过测试，只有delegate是vc的时候vc的title或者navigationItem.titleView才会跟着移动。
+//所以在下并没有使用一个单例一直作为delegate存在，单例的话效果和新版QQ一样，title不会移动，但是也会有fade效果啦。
         self.navigationController.delegate = self;
     }
 }
@@ -146,25 +150,28 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
                                                  toViewController:(UIViewController *)toVC {
     if (fromVC == self) {
         if (operation == UINavigationControllerOperationPop) {
-            return [[MLTransitionFromRightToLeft alloc]init];
-        }else{
-            //发现自定义的会很卡，这里需求和系统的效果一样，就默认使用系统的吧
-            return nil;
-//            return [[MLTransitionFromLeftToRight alloc]init];
+            MLTransitionAnimation *animationController = [MLTransitionAnimation new];
+            animationController.type = MLTransitionAnimationTypePop;
+            return animationController;
         }
-    }else {
-        return nil;
+//        else{
+//            MLTransitionAnimation *animationController = [MLTransitionAnimation new];
+//            animationController.type = MLTransitionAnimationTypePush;
+//            return animationController;
+//        }
+        //Push的话，发现自定义的性能可能有点问题，由于这里需求和系统的效果一样，就默认使用系统的吧
     }
+    
+    return nil;
 }
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
                          interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
-    if ([animationController isKindOfClass:[MLTransitionFromRightToLeft class]]) {
+    if ([animationController isKindOfClass:[MLTransitionAnimation class]]&&((MLTransitionAnimation*)animationController).type==MLTransitionAnimationTypePop) {
         return self.percentDrivenInteractivePopTransition;
     }
-    else {
-        return nil;
-    }
+    
+    return nil;
 }
 
 #pragma mark - UIGestureRecognizer handlers
@@ -247,7 +254,6 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     }
     
     return YES;
-    
 }
 
 @end

@@ -15,6 +15,6 @@ typedef enum {
 
 @interface UIViewController (MLTransition)<UINavigationControllerDelegate>
 
-+ (void)validateWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type;
++ (void)validatePanPackWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type;
 
 @end

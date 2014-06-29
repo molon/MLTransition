@@ -7,7 +7,6 @@
 //
 
 #import "ViewController.h"
-#import "MLTransitionFromLeftToRight.h"
 #import "TempViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 

@@ -7,8 +7,6 @@
 //
 
 #import "TempViewController.h"
-#import "MLTransitionFromRightToLeft.h"
-#import "MLTransitionFromLeftToRight.h"
 
 @interface TempViewController ()<UINavigationControllerDelegate>
 
@@ -16,6 +14,7 @@
 
 @property (nonatomic, strong) UIPercentDrivenInteractiveTransition *interactivePopTransition;
 
+@property (nonatomic, assign) BOOL hideStatusBar;
 @end
 
 @implementation TempViewController
@@ -54,6 +53,8 @@
     self.view.backgroundColor = bkgColor;
     
 //测试1套
+    self.hideStatusBar = YES;
+    [self setNeedsStatusBarAppearanceUpdate];
     self.navigationController.navigationBarHidden = YES;
     [self.view addSubview:self.imageView];
     
@@ -139,6 +140,12 @@
 
 - (BOOL)prefersStatusBarHidden
 {
-    return YES;
+    return self.hideStatusBar;
 }
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+    return UIStatusBarAnimationSlide;
+}
+
 @end
