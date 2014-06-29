@@ -10,4 +10,6 @@
 
 @interface TempViewController : UIViewController
 
+@property (nonatomic, strong) UIImageView *imageView;
+
 @end

@@ -13,7 +13,6 @@
 		3623A20D195E527600765ABF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3623A20B195E527600765ABF /* InfoPlist.strings */; };
 		3623A20F195E527600765ABF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3623A20E195E527600765ABF /* main.m */; };
 		3623A213195E527600765ABF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3623A212195E527600765ABF /* AppDelegate.m */; };
-		3623A216195E527600765ABF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3623A214195E527600765ABF /* Main.storyboard */; };
 		3623A219195E527600765ABF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3623A218195E527600765ABF /* ViewController.m */; };
 		3623A21B195E527600765ABF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3623A21A195E527600765ABF /* Images.xcassets */; };
 		3623A222195E527600765ABF /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3623A221195E527600765ABF /* XCTest.framework */; };
@@ -27,6 +26,9 @@
 		365ED711195E94FC00B45D30 /* MLTransitionFromRightToLeft.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED70D195E94FC00B45D30 /* MLTransitionFromRightToLeft.m */; };
 		365ED712195E94FC00B45D30 /* UIViewController+MLTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */; };
 		365ED72A195EC36600B45D30 /* MLTransition.gif in Resources */ = {isa = PBXBuildFile; fileRef = 365ED729195EC36600B45D30 /* MLTransition.gif */; };
+		365ED72B195EC46F00B45D30 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3623A214195E527600765ABF /* Main.storyboard */; };
+		365ED731195FCD9500B45D30 /* IMG_0767.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 365ED72F195FCD9500B45D30 /* IMG_0767.PNG */; };
+		365ED732195FCD9500B45D30 /* IMG_0768.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 365ED730195FCD9500B45D30 /* IMG_0768.PNG */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +72,8 @@
 		365ED70E195E94FC00B45D30 /* UIViewController+MLTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MLTransition.h"; sourceTree = "<group>"; };
 		365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MLTransition.m"; sourceTree = "<group>"; };
 		365ED729195EC36600B45D30 /* MLTransition.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = MLTransition.gif; sourceTree = "<group>"; };
+		365ED72F195FCD9500B45D30 /* IMG_0767.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0767.PNG; sourceTree = "<group>"; };
+		365ED730195FCD9500B45D30 /* IMG_0768.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0768.PNG; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +105,8 @@
 			isa = PBXGroup;
 			children = (
 				365ED729195EC36600B45D30 /* MLTransition.gif */,
+				365ED72F195FCD9500B45D30 /* IMG_0767.PNG */,
+				365ED730195FCD9500B45D30 /* IMG_0768.PNG */,
 				3623A208195E527600765ABF /* MLTransitionNavigationController */,
 				3623A227195E527600765ABF /* MLTransitionNavigationControllerTests */,
 				3623A201195E527600765ABF /* Frameworks */,
@@ -268,7 +274,9 @@
 				365ED72A195EC36600B45D30 /* MLTransition.gif in Resources */,
 				3623A21B195E527600765ABF /* Images.xcassets in Resources */,
 				3623A20D195E527600765ABF /* InfoPlist.strings in Resources */,
-				3623A216195E527600765ABF /* Main.storyboard in Resources */,
+				365ED731195FCD9500B45D30 /* IMG_0767.PNG in Resources */,
+				365ED732195FCD9500B45D30 /* IMG_0768.PNG in Resources */,
+				365ED72B195EC46F00B45D30 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -34,7 +34,7 @@
     //设置初始值
     toVC.view.transform = CGAffineTransformMakeTranslation(-toVC.view.frame.size.width*kMLTransitionConstant_LeftVC_Move_Ratio_Of_Width, 0);
     
-    [UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+    [UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveLinear animations:^{
         fromVC.view.transform = CGAffineTransformMakeTranslation(fromVC.view.frame.size.width, 0);
         toVC.view.transform = CGAffineTransformIdentity;
     } completion:^(BOOL finished) {

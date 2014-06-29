@@ -22,6 +22,6 @@
 #define kMLTransitionConstant_RightVC_ShadowOpacity 0.3f
 
 //有效的向右拖动的最小速率，即为大于这个速率就认为想返回上一页罢了
-#define kMLTransitionConstant_Valid_MIN_Velocity 400.0f
+#define kMLTransitionConstant_Valid_MIN_Velocity 300.0f
 
 #endif

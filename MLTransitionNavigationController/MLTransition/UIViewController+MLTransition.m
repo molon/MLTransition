@@ -192,6 +192,8 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         }
         //建立一个transition的百分比控制对象
         self.percentDrivenInteractivePopTransition = [[UIPercentDrivenInteractiveTransition alloc] init];
+        self.percentDrivenInteractivePopTransition.completionCurve = UIViewAnimationCurveLinear;
+        
         [self.navigationController popViewControllerAnimated:YES];
     }else if (recognizer.state == UIGestureRecognizerStateChanged) {
         //根据拖动调整transition状态
@@ -201,23 +203,22 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         CGFloat velocity = [recognizer velocityInView:self.view].x; //我们只关心x的速率
         
         if (velocity > kMLTransitionConstant_Valid_MIN_Velocity) { //向右速率太快就完成
+            self.percentDrivenInteractivePopTransition.completionSpeed /= 1.3f;
             [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
         }else if (velocity < -kMLTransitionConstant_Valid_MIN_Velocity){ //向左速率太快就取消
+            self.percentDrivenInteractivePopTransition.completionSpeed /= 1.8f;
             [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
         }else{
-            if (progress < 0.2f) {
-                [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
-            }else if (progress > 0.7f) {
+            BOOL isFinished = NO;
+            if (progress > 0.8f || (progress>=0.2f&&velocity>0.0f)) {
+                isFinished = YES;
+            }
+            if (isFinished) {
+                self.percentDrivenInteractivePopTransition.completionSpeed /= 1.5f;
                 [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
             }else{
-                //在中间区域，如果向左速率稍大，就取消，否则就完成
-                if (velocity < -5.0f) {
-                    self.percentDrivenInteractivePopTransition.completionSpeed /= 2.0f;
-                    [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
-                }else{
-                    self.percentDrivenInteractivePopTransition.completionSpeed /= 1.5f;
-                    [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
-                }
+                self.percentDrivenInteractivePopTransition.completionSpeed /= 2.0f;
+                [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
             }
         }
         self.percentDrivenInteractivePopTransition = nil;
