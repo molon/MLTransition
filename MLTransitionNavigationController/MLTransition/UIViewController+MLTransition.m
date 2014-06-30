@@ -17,6 +17,8 @@ NSString * const kMLTransition_PercentDrivenInteractivePopTransition = @"__MLTra
 
 NSString * const kMLTransition_GestureRecognizer = @"__MLTransition_GestureRecognizer";
 
+NSString * const kMLTransition_ViewController_OfPan = @"__MLTransition_ViewController_OfPan";
+
 //设置一个默认的全局使用的type
 static MLTransitionGestureRecognizerType __MLTransitionGestureRecognizerType = MLTransitionGestureRecognizerTypePan;
 
@@ -47,7 +49,70 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 	}
 }
 
-@interface UIViewController ()<UIGestureRecognizerDelegate>
+@interface UIGestureRecognizer(__MLTransistion)
+
+@property (nonatomic, assign) UIViewController *__MLTransition_ViewController;
+
+@end
+
+@implementation UIGestureRecognizer(__MLTransistion)
+
+- (void)set__MLTransition_ViewController:(UIViewController *)__MLTransition_ViewController
+{
+    [self willChangeValueForKey:kMLTransition_ViewController_OfPan];
+	objc_setAssociatedObject(self, &kMLTransition_ViewController_OfPan, __MLTransition_ViewController, OBJC_ASSOCIATION_ASSIGN);
+    [self didChangeValueForKey:kMLTransition_ViewController_OfPan];
+}
+
+- (UIViewController *)__MLTransition_ViewController
+{
+	return objc_getAssociatedObject(self, &kMLTransition_ViewController_OfPan);
+}
+
+@end
+
+//作为手势的delegate，原因是如果delegate是当前vc则可能产生子类覆盖的情况
+@interface __MLTransistion_Gesture_Delegate_Object : NSObject<UIGestureRecognizerDelegate>
+
+@end
+
+@implementation __MLTransistion_Gesture_Delegate_Object
+
++ (instancetype)shareInstance {
+    static __MLTransistion_Gesture_Delegate_Object *_shareInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _shareInstance = [[[self class] alloc]init];
+    });
+    return _shareInstance;
+}
+
+
+//直接在这处理的话对性能有好处。
+- (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer
+{
+    UIViewController *vc = gestureRecognizer.__MLTransition_ViewController;
+    if (!vc) {
+        return NO;
+    }
+    
+    if (!vc.navigationController||
+        [vc.navigationController.transitionCoordinator isAnimated]||
+        vc.navigationController.viewControllers.count < 2) {
+        return NO;
+    }
+    
+    //普通拖曳模式，如果开始方向不对即不启用
+    if (__MLTransitionGestureRecognizerType==MLTransitionGestureRecognizerTypePan&&[gestureRecognizer velocityInView:vc.view].x<=0) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+@end
+
+@interface UIViewController ()
 
 @property (nonatomic, strong) UIPercentDrivenInteractiveTransition *percentDrivenInteractivePopTransition;
 @property (nonatomic, strong) UIGestureRecognizer *MLTransition_gestureRecognizer;
@@ -68,6 +133,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         __MLTransition_Swizzle([self class],@selector(viewDidLoad),@selector(__MLTransition_Hook_ViewDidLoad));
         __MLTransition_Swizzle([self class],@selector(viewDidAppear:),@selector(__MLTransition_Hook_ViewDidAppear:));
         __MLTransition_Swizzle([self class],@selector(viewWillDisappear:),@selector(__MLTransition_Hook_ViewWillDisappear:));
+        __MLTransition_Swizzle([self class], NSSelectorFromString(@"dealloc"),@selector(__MLTransition_Hook_Dealloc));
     });
 }
 
@@ -110,12 +176,12 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         if (__MLTransitionGestureRecognizerType == MLTransitionGestureRecognizerTypeScreenEdgePan) {
             gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(__MLTransition_HandlePopRecognizer:)];
             ((UIScreenEdgePanGestureRecognizer*)gestureRecognizer).edges = UIRectEdgeLeft;
-            //这玩意不需要走delegate，走了还麻烦
         }else{
             gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(__MLTransition_HandlePopRecognizer:)];
-            gestureRecognizer.delegate = self;
         }
-        
+    
+        gestureRecognizer.__MLTransition_ViewController = self;
+        gestureRecognizer.delegate = [__MLTransistion_Gesture_Delegate_Object shareInstance];
         
         self.MLTransition_gestureRecognizer = gestureRecognizer;
         [self.view addGestureRecognizer:gestureRecognizer];
@@ -126,8 +192,8 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     [self __MLTransition_Hook_ViewDidAppear:animated];
     
     if (![self isKindOfClass:[UINavigationController class]]) {
-//经过测试，只有delegate是vc的时候vc的title或者navigationItem.titleView才会跟着移动。
-//所以在下并没有使用一个单例一直作为delegate存在，单例的话效果和新版QQ一样，title不会移动，但是也会有fade效果啦。
+        //经过测试，只有delegate是vc的时候vc的title或者navigationItem.titleView才会跟着移动。
+        //所以在下并没有使用一个单例一直作为delegate存在，单例的话效果和新版QQ一样，title不会移动，但是也会有fade效果啦。
         self.navigationController.delegate = self;
     }
 }
@@ -142,6 +208,13 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     }
 }
 
+- (void)__MLTransition_Hook_Dealloc
+{
+    self.MLTransition_gestureRecognizer.delegate = nil;
+    self.MLTransition_gestureRecognizer.__MLTransition_ViewController = nil;
+
+    [self __MLTransition_Hook_Dealloc];
+}
 
 #pragma mark - UINavigationControllerDelegate
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
@@ -154,11 +227,11 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
             animationController.type = MLTransitionAnimationTypePop;
             return animationController;
         }
-//        else{
-//            MLTransitionAnimation *animationController = [MLTransitionAnimation new];
-//            animationController.type = MLTransitionAnimationTypePush;
-//            return animationController;
-//        }
+        //        else{
+        //            MLTransitionAnimation *animationController = [MLTransitionAnimation new];
+        //            animationController.type = MLTransitionAnimationTypePush;
+        //            return animationController;
+        //        }
         //Push的话，发现自定义的性能可能有点问题，由于这里需求和系统的效果一样，就默认使用系统的吧
     }
     
@@ -176,33 +249,24 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 
 #pragma mark - UIGestureRecognizer handlers
 - (void)__MLTransition_HandlePopRecognizer:(UIPanGestureRecognizer*)recognizer {
-    //如果没有导航器或者是导航器第一个就忽略
     if (recognizer.state == UIGestureRecognizerStateBegan) {
-        if (!self.navigationController||
-            [self.navigationController.transitionCoordinator isAnimated]||
-            self.navigationController.viewControllers.count < 2) {
-            return;
-        }
-    }else{
-        if (!self.percentDrivenInteractivePopTransition) {
-            return;
-        }
-    }
-    
-    CGFloat progress = [recognizer translationInView:self.view].x / (self.view.bounds.size.width * 1.0f);
-    progress = MIN(1.0, MAX(0.0, progress));
-    
-    if (recognizer.state == UIGestureRecognizerStateBegan) {
-        //如果不是开始就横向拉就忽略
-        if (progress<=0) {
-            return;
-        }
         //建立一个transition的百分比控制对象
         self.percentDrivenInteractivePopTransition = [[UIPercentDrivenInteractiveTransition alloc] init];
         self.percentDrivenInteractivePopTransition.completionCurve = UIViewAnimationCurveLinear;
         
         [self.navigationController popViewControllerAnimated:YES];
-    }else if (recognizer.state == UIGestureRecognizerStateChanged) {
+        return;
+    }
+    
+    if (!self.percentDrivenInteractivePopTransition) {
+        return;
+    }
+    
+    
+    CGFloat progress = [recognizer translationInView:self.view].x / (self.view.bounds.size.width * 1.0f);
+    progress = MIN(1.0, MAX(0.0, progress));
+    
+    if (recognizer.state == UIGestureRecognizerStateChanged) {
         //根据拖动调整transition状态
         [self.percentDrivenInteractivePopTransition updateInteractiveTransition:progress];
     }else if ((recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)) {
@@ -231,29 +295,6 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         self.percentDrivenInteractivePopTransition = nil;
     }
     
-}
-
-//这个玩意有可能会被一些需求中子类覆盖，但无妨，__MLTransition_HandlePopRecognizer也做了些处理
-//直接在这处理的话对性能有好处。
-- (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer
-{
-    if (![gestureRecognizer isEqual:self.MLTransition_gestureRecognizer]) {
-        return YES;
-    }
-    
-    if (!self.navigationController||
-        [self.navigationController.transitionCoordinator isAnimated]||
-        self.navigationController.viewControllers.count < 2) {
-        return NO;
-    }
-    
-    CGFloat progress = [gestureRecognizer translationInView:self.view].x / (self.view.bounds.size.width * 1.0f);
-    progress = MIN(1.0, MAX(0.0, progress));
-    if (progress<=0) {
-        return NO;
-    }
-    
-    return YES;
 }
 
 @end
