@@ -16,6 +16,7 @@
 NSString * const kMLTransition_PercentDrivenInteractivePopTransition = @"__MLTransition_PercentDrivenInteractivePopTransition";
 
 NSString * const kMLTransition_GestureRecognizer = @"__MLTransition_GestureRecognizer";
+NSString * const kMLTransition_IsDisabled = @"__MLTransition_IsDisabled";
 
 NSString * const kMLTransition_ViewController_OfPan = @"__MLTransition_ViewController_OfPan";
 
@@ -116,6 +117,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 
 @property (nonatomic, strong) UIPercentDrivenInteractiveTransition *percentDrivenInteractivePopTransition;
 @property (nonatomic, strong) UIGestureRecognizer *MLTransition_gestureRecognizer;
+@property (nonatomic, assign) BOOL isDisableMLTransition;
 
 @end
 
@@ -162,6 +164,18 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 	return objc_getAssociatedObject(self, &kMLTransition_GestureRecognizer);
 }
 
+- (BOOL)isDisableMLTransition
+{
+	return [objc_getAssociatedObject(self, &kMLTransition_IsDisabled) boolValue];
+}
+
+- (void)setIsDisableMLTransition:(BOOL)isDisableMLTransition
+{
+    [self willChangeValueForKey:kMLTransition_IsDisabled];
+	objc_setAssociatedObject(self, &kMLTransition_IsDisabled, @(isDisableMLTransition), OBJC_ASSOCIATION_ASSIGN);
+    [self didChangeValueForKey:kMLTransition_IsDisabled];
+}
+
 #pragma mark - hook
 - (void)__MLTransition_Hook_ViewDidLoad
 {
@@ -191,6 +205,11 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 - (void)__MLTransition_Hook_ViewDidAppear:(BOOL)animated {
     [self __MLTransition_Hook_ViewDidAppear:animated];
     
+    if (self.navigationController.delegate) {
+        self.isDisableMLTransition = YES;
+        return; //如果已经有delegate了，说明丫需要自己玩，那就不搞了，例如UIImagePickerController
+    }
+    
     if (![self isKindOfClass:[UINavigationController class]]) {
         //经过测试，只有delegate是vc的时候vc的title或者navigationItem.titleView才会跟着移动。
         //所以在下并没有使用一个单例一直作为delegate存在，单例的话效果和新版QQ一样，title不会移动，但是也会有fade效果啦。
@@ -200,6 +219,10 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 
 - (void)__MLTransition_Hook_ViewWillDisappear:(BOOL)animated {
     [self __MLTransition_Hook_ViewWillDisappear:animated];
+    
+    if (self.isDisableMLTransition) {
+        return;
+    }
     
     if (![self isKindOfClass:[UINavigationController class]]) {
         if (self.navigationController.delegate == self) {
@@ -250,6 +273,11 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 #pragma mark - UIGestureRecognizer handlers
 - (void)__MLTransition_HandlePopRecognizer:(UIPanGestureRecognizer*)recognizer {
     if (recognizer.state == UIGestureRecognizerStateBegan) {
+        if (self.isDisableMLTransition) {
+            [self.navigationController popViewControllerAnimated:YES];
+            return;
+        }
+        
         //建立一个transition的百分比控制对象
         self.percentDrivenInteractivePopTransition = [[UIPercentDrivenInteractiveTransition alloc] init];
         self.percentDrivenInteractivePopTransition.completionCurve = UIViewAnimationCurveLinear;
@@ -274,7 +302,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         CGFloat velocity = [recognizer velocityInView:self.view].x; //我们只关心x的速率
         
         if (velocity > kMLTransitionConstant_Valid_MIN_Velocity) { //向右速率太快就完成
-            self.percentDrivenInteractivePopTransition.completionSpeed /= 1.3f;
+//            self.percentDrivenInteractivePopTransition.completionSpeed /= 1.0f;
             [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
         }else if (velocity < -kMLTransitionConstant_Valid_MIN_Velocity){ //向左速率太快就取消
             self.percentDrivenInteractivePopTransition.completionSpeed /= 1.8f;

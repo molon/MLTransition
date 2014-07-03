@@ -53,7 +53,7 @@
 {
 //    UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
     
-    
+    NSLog(@"得到了image");
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
 
