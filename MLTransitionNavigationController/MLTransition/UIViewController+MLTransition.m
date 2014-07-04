@@ -166,15 +166,16 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 
 - (BOOL)isDisableMLTransition
 {
-	return [objc_getAssociatedObject(self, &kMLTransition_IsDisabled) boolValue];
+	return [(NSNumber *)objc_getAssociatedObject(self, &kMLTransition_IsDisabled) boolValue];
 }
 
 - (void)setIsDisableMLTransition:(BOOL)isDisableMLTransition
 {
     [self willChangeValueForKey:kMLTransition_IsDisabled];
-	objc_setAssociatedObject(self, &kMLTransition_IsDisabled, @(isDisableMLTransition), OBJC_ASSOCIATION_ASSIGN);
+	objc_setAssociatedObject(self, &kMLTransition_IsDisabled, @(isDisableMLTransition), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [self didChangeValueForKey:kMLTransition_IsDisabled];
 }
+
 
 #pragma mark - hook
 - (void)__MLTransition_Hook_ViewDidLoad
