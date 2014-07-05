@@ -11,7 +11,7 @@
 #import "MLTransitionAnimation.h"
 
 //有效的向右拖动的最小速率，即为大于这个速率就认为想返回上一页罢了
-#define kMLTransitionConstant_Valid_MIN_Velocity 300.0f
+#define kMLTransitionConstant_Valid_MIN_Velocity 350.0f
 
 NSString * const kMLTransition_PercentDrivenInteractivePopTransition = @"__MLTransition_PercentDrivenInteractivePopTransition";
 
@@ -23,6 +23,7 @@ NSString * const kMLTransition_ViewController_OfPan = @"__MLTransition_ViewContr
 //设置一个默认的全局使用的type
 static MLTransitionGestureRecognizerType __MLTransitionGestureRecognizerType = MLTransitionGestureRecognizerTypePan;
 
+#pragma mark - hook大法
 //静态就交换静态，实例方法就交换实例方法
 void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 {
@@ -50,6 +51,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 	}
 }
 
+#pragma mark - 手势设置一个对应VC的标识，以用来提供给其delegate使用以及scrollView同时手势判断
 @interface UIGestureRecognizer(__MLTransistion)
 
 @property (nonatomic, assign) UIViewController *__MLTransition_ViewController;
@@ -72,7 +74,29 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 
 @end
 
-//作为手势的delegate，原因是如果delegate是当前vc则可能产生子类覆盖的情况
+#pragma mark - scrollView相关，可以让我们的手势不受其pan手势影响
+@interface UIScrollView(__MLTransistion)
+
+@end
+
+@implementation UIScrollView(__MLTransistion)
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([gestureRecognizer isEqual:self.panGestureRecognizer]) {
+        if (self.contentSize.width>self.frame.size.width) { //如果有横向滚动的可能当然就需要忽略了。
+            return NO;
+        }
+        if (otherGestureRecognizer.__MLTransition_ViewController) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+@end
+
+#pragma mark - 作为手势的delegate，原因是如果delegate是当前vc则可能产生子类覆盖的情况
 @interface __MLTransistion_Gesture_Delegate_Object : NSObject<UIGestureRecognizerDelegate>
 
 @end
@@ -104,14 +128,24 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     }
     
     //普通拖曳模式，如果开始方向不对即不启用
-    if (__MLTransitionGestureRecognizerType==MLTransitionGestureRecognizerTypePan&&[gestureRecognizer velocityInView:vc.view].x<=0) {
-        return NO;
+    if (__MLTransitionGestureRecognizerType==MLTransitionGestureRecognizerTypePan){
+        CGPoint velocity = [gestureRecognizer velocityInView:vc.view];
+        if(velocity.x<=0) {
+            //NSLog(@"不是右滑的");
+            return NO;
+        }
+        if (ABS(velocity.y)>200.0f) {
+            //            NSLog(@"上下速率太高,认作不想开始");
+            return NO;
+        }
     }
     
     return YES;
 }
 
 @end
+
+#pragma mark - viewController
 
 @interface UIViewController ()
 
@@ -126,6 +160,9 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 #pragma mark - outside call
 + (void)validatePanPackWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type
 {
+    if ([[[UIDevice currentDevice] systemVersion]floatValue]<7.0) {
+        return;
+    }
     //整个程序的生命周期只允许执行一次
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -176,7 +213,6 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     [self didChangeValueForKey:kMLTransition_IsDisabled];
 }
 
-
 #pragma mark - hook
 - (void)__MLTransition_Hook_ViewDidLoad
 {
@@ -194,7 +230,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         }else{
             gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(__MLTransition_HandlePopRecognizer:)];
         }
-    
+        
         gestureRecognizer.__MLTransition_ViewController = self;
         gestureRecognizer.delegate = [__MLTransistion_Gesture_Delegate_Object shareInstance];
         
@@ -236,7 +272,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 {
     self.MLTransition_gestureRecognizer.delegate = nil;
     self.MLTransition_gestureRecognizer.__MLTransition_ViewController = nil;
-
+    
     [self __MLTransition_Hook_Dealloc];
 }
 
@@ -281,7 +317,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         
         //建立一个transition的百分比控制对象
         self.percentDrivenInteractivePopTransition = [[UIPercentDrivenInteractiveTransition alloc] init];
-        self.percentDrivenInteractivePopTransition.completionCurve = UIViewAnimationCurveLinear;
+        self.percentDrivenInteractivePopTransition.completionCurve = UIViewAnimationCurveEaseOut;
         
         [self.navigationController popViewControllerAnimated:YES];
         return;
@@ -298,12 +334,19 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     if (recognizer.state == UIGestureRecognizerStateChanged) {
         //根据拖动调整transition状态
         [self.percentDrivenInteractivePopTransition updateInteractiveTransition:progress];
+        
+        //中途上下速率太快就认为想取消
+        CGFloat velocityY = [recognizer velocityInView:self.view].y;
+        if (ABS(velocityY)>500.0f) {
+            [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
+            self.percentDrivenInteractivePopTransition = nil;
+        }
     }else if ((recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)) {
         //结束或者取消了手势，根据方向和速率来判断应该完成transition还是取消transition
         CGFloat velocity = [recognizer velocityInView:self.view].x; //我们只关心x的速率
         
         if (velocity > kMLTransitionConstant_Valid_MIN_Velocity) { //向右速率太快就完成
-//            self.percentDrivenInteractivePopTransition.completionSpeed /= 1.0f;
+            //            self.percentDrivenInteractivePopTransition.completionSpeed /= 1.0f;
             [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
         }else if (velocity < -kMLTransitionConstant_Valid_MIN_Velocity){ //向左速率太快就取消
             self.percentDrivenInteractivePopTransition.completionSpeed /= 1.8f;
@@ -314,7 +357,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
                 isFinished = YES;
             }
             if (isFinished) {
-                self.percentDrivenInteractivePopTransition.completionSpeed /= 1.5f;
+//                self.percentDrivenInteractivePopTransition.completionSpeed /= 1.2f;
                 [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
             }else{
                 self.percentDrivenInteractivePopTransition.completionSpeed /= 2.0f;
