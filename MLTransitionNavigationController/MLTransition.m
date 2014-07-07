@@ -12,6 +12,8 @@
 
 //设置一个默认的全局使用的type，默认是普通拖返模式
 static MLTransitionGestureRecognizerType __MLTransitionGestureRecognizerType = MLTransitionGestureRecognizerTypePan;
+//标识是否生效了
+static BOOL __MLTransition_BeInvoke = NO;
 
 #pragma mark - hook大法
 //静态就交换静态，实例方法就交换实例方法
@@ -58,6 +60,11 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 
 - (void)__MLTransition_Hook_ViewDidLoad;
 - (void)__MLTransition_Hook_Dealloc;
+
+@end
+
+#pragma mark - NSObject category interface
+@interface NSObject(__MLTransistion)
 
 @end
 
@@ -110,6 +117,8 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         
         __MLTransition_Swizzle([UINavigationController class],@selector(viewDidLoad),@selector(__MLTransition_Hook_ViewDidLoad));
         __MLTransition_Swizzle([UINavigationController class], NSSelectorFromString(@"dealloc"),@selector(__MLTransition_Hook_Dealloc));
+        
+        __MLTransition_BeInvoke = YES;
     });
     
 }
@@ -122,34 +131,6 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         self.animation = [MLTransitionAnimation new];
     }
     return self;
-}
-
-
-#pragma mark UINavigationControllerDelegate
-- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
-                                  animationControllerForOperation:(UINavigationControllerOperation)operation
-                                               fromViewController:(UIViewController *)fromVC
-                                                 toViewController:(UIViewController *)toVC {
-    
-    //只做pop，push用系统的肯定性能最好
-    if (operation == UINavigationControllerOperationPop) {
-        _animation.type = MLTransitionAnimationTypePop;
-        return _animation;
-    }else if (operation == UINavigationControllerOperationPush){
-        _animation.type = MLTransitionAnimationTypePush;
-        return _animation;
-    }
-    
-    return nil;
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
-                         interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
-    if ([_animation isEqual:animationController]&&_animation.type==MLTransitionAnimationTypePop) {
-        return _isInteractiving?_popInteractiveTransition:nil;
-    }
-    
-    return nil;
 }
 
 #pragma mark GestureRecognizer delegate
@@ -188,11 +169,8 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     UINavigationController *navVC = recognizer.__MLTransition_NavController;
     
     if (recognizer.state == UIGestureRecognizerStateBegan) {
-        if ([navVC.delegate isEqual:self]) {
-            _isInteractiving = YES;
-        }else{
-            _isInteractiving = NO;
-        }
+        _isInteractiving = YES;
+        
         //开始pop
         [navVC popViewControllerAnimated:YES];
         return;
@@ -249,6 +227,54 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         _isInteractiving = NO;
     }
     
+}
+
+@end
+
+#pragma mark - NSObject category implementation
+
+/**
+ *  这样的话，即使不是UINavigationController的delegate不是我们的单例，也可以捕获到。
+ *  除非有object重载了这俩方法
+ */
+@implementation NSObject(__MLTransistion)
+
+
+#pragma mark UINavigationControllerDelegate
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                  animationControllerForOperation:(UINavigationControllerOperation)operation
+                                               fromViewController:(UIViewController *)fromVC
+                                                 toViewController:(UIViewController *)toVC {
+    
+    if (!__MLTransition_BeInvoke) {
+        return nil;
+    }
+    
+    if (operation == UINavigationControllerOperationPop) {
+        MLTransitionAnimation *animation = [MLTransition shareInstance].animation;
+        animation.type = MLTransitionAnimationTypePop;
+        return animation;
+    }else if (operation == UINavigationControllerOperationPush){
+        MLTransitionAnimation *animation = [MLTransition shareInstance].animation;
+        animation.type = MLTransitionAnimationTypePush;
+        return animation;
+    }
+    
+    return nil;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
+                         interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
+    if (!__MLTransition_BeInvoke) {
+        return nil;
+    }
+    
+    MLTransitionAnimation *animation = [MLTransition shareInstance].animation;
+    if ([animation isEqual:animationController]&&animation.type==MLTransitionAnimationTypePop) {
+        return [MLTransition shareInstance].isInteractiving?[MLTransition shareInstance].popInteractiveTransition:nil;
+    }
+    
+    return nil;
 }
 
 
@@ -311,12 +337,11 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
         
         self.__MLTransition_panGestureRecognizer = gestureRecognizer;
         [self.view addGestureRecognizer:gestureRecognizer];
-    }
     
-    if (!self.delegate) {
-        //本身没有delegate，才能放心愉快的设置其为我们的单例
-        //即使之后被修改了，也是不需要知道我们控件内实现而能了解其本身逻辑的
-        self.delegate = [MLTransition shareInstance];
+        //放在这里是为了保证只会执行一次
+        //自动对delegate进行监视，如果发现其被置为nil，则用我们的单例作为delegate
+        //PS要记住，其delegate是assgin属性的，不用时候记得重置为nil
+        [self addObserver:self forKeyPath:@"delegate" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionInitial context:nil];
     }
 }
 
@@ -324,6 +349,8 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
 - (void)__MLTransition_Hook_Dealloc
 {
     //清理下该清理的
+    [self removeObserver:self forKeyPath:@"delegate" context:nil];
+    
     //是我们的单例，我们才能放心愉快的重置掉。
     if ([self.delegate isEqual:[MLTransition shareInstance]]) {
         self.delegate = nil;
@@ -335,6 +362,45 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
     [self __MLTransition_Hook_Dealloc];
 }
 
+
+#pragma mark KVO
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([@"delegate" isEqualToString:keyPath]) {
+        id new = [change objectForKey:NSKeyValueChangeNewKey];
+//        NSLog(@"%@",new);
+        if ([new isKindOfClass:[NSNull class]]) {
+            self.delegate = [MLTransition shareInstance];
+        }
+    }else{
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+
+@end
+
+
+#pragma mark - UIScrollView category ，可让scrollView在一个良好的关系下并存
+@interface UIScrollView(__MLTransistion)
+
+@end
+
+@implementation UIScrollView(__MLTransistion)
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([gestureRecognizer isEqual:self.panGestureRecognizer]) {
+        if (self.contentSize.width>self.frame.size.width) { //如果此scrollView有横向滚动的可能当然就需要忽略了。
+            return NO;
+        }
+        if (otherGestureRecognizer.__MLTransition_NavController) {
+            //说明这玩意是我们的手势
+            return YES;
+        }
+    }
+    return NO;
+}
 
 @end
 

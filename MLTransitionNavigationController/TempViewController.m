@@ -77,6 +77,22 @@
     
     //测试自定义返回按钮会不会影响拖返。PS:默认系统的是会影响的
 //    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
+    
+}
+
+//下面俩测试如果自己使用delegate，自动修正的效果
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+//    self.navigationController.delegate = self;
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+//    self.navigationController.delegate = nil;
 }
 
 - (void)pop
@@ -96,6 +112,11 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (void)pressed2
+{
+    //测试是否能自动纠正为我们自己的单例
+    self.navigationController.delegate = nil;
+}
 
 - (UIButton *)button
 {
@@ -118,7 +139,7 @@
 		UIButton *button = [[UIButton alloc]init];
 		[button setTitle:@"按下2" forState:UIControlStateNormal];
         [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [button addTarget:self action:@selector(pop) forControlEvents:UIControlEventTouchUpInside];
+        [button addTarget:self action:@selector(pressed2) forControlEvents:UIControlEventTouchUpInside];
         button.backgroundColor = [UIColor redColor];
         
         
