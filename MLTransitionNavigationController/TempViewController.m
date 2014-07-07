@@ -54,15 +54,15 @@
     self.view.backgroundColor = bkgColor;
     
 //测试1套
-//    self.hideStatusBar = YES;
-//    [self setNeedsStatusBarAppearanceUpdate];
-//    self.navigationController.navigationBarHidden = YES;
-//    [self.view addSubview:self.imageView];
-//    
-//    UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pressed)];
-//    [self.imageView addGestureRecognizer:gesture];
-//    return;
-//    
+    self.hideStatusBar = YES;
+    [self setNeedsStatusBarAppearanceUpdate];
+    self.navigationController.navigationBarHidden = YES;
+    [self.view addSubview:self.imageView];
+    
+    UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pressed)];
+    [self.imageView addGestureRecognizer:gesture];
+    return;
+    
 
 //测试2套
     [self.view addSubview:self.button];
@@ -76,7 +76,7 @@
     self.navigationItem.titleView = label;
     
     //测试自定义返回按钮会不会影响拖返。PS:默认系统的是会影响的
-//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
     
 }
 
