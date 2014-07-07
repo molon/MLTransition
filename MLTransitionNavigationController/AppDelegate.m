@@ -8,8 +8,8 @@
 
 #import "AppDelegate.h"
 
-#warning 添加个头文件
-#import "UIViewController+MLTransition.h"
+//#warning 添加个头文件
+#import "MLTransition.h"
 
 @implementation AppDelegate
 
@@ -17,8 +17,7 @@
 {
     // Override point for customization after application launch.
     
-#warning 此句来启用即可，要放到开始处哦
-    [UIViewController validatePanPackWithMLTransitionGestureRecognizerType:MLTransitionGestureRecognizerTypePan];
+    [MLTransition validatePanPackWithMLTransitionGestureRecognizerType:MLTransitionGestureRecognizerTypePan];
     
     return YES;
 }

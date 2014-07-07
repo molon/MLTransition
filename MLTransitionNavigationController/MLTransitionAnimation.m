@@ -2,11 +2,12 @@
 //  MLTransitionAnimation.m
 //  MLTransitionNavigationController
 //
-//  Created by molon on 6/29/14.
+//  Created by molon on 7/7/14.
 //  Copyright (c) 2014 molon. All rights reserved.
 //
 
 #import "MLTransitionAnimation.h"
+
 
 //通常意义上的动画时间
 #define kMLTransitionConstant_TransitionDuration 0.25f
@@ -60,7 +61,7 @@
             fromVC.view.transform = CGAffineTransformMakeTranslation(fromVC.view.frame.size.width, 0);
         }
         toVC.view.transform = CGAffineTransformIdentity;
-
+        
     } completion:^(BOOL finished) {
         vc.view.layer.shadowOpacity = 0.0f;
         
@@ -76,7 +77,6 @@
     //设置一个动画时间。
     return kMLTransitionConstant_TransitionDuration;
 }
-
 
 
 @end

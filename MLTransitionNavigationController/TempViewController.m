@@ -11,6 +11,7 @@
 @interface TempViewController ()<UINavigationControllerDelegate>
 
 @property (nonatomic, strong) UIButton *button;
+@property (nonatomic, strong) UIButton *button2;
 
 @property (nonatomic, strong) UIPercentDrivenInteractiveTransition *interactivePopTransition;
 
@@ -65,6 +66,7 @@
 
 //测试2套
     [self.view addSubview:self.button];
+    [self.view addSubview:self.button2];
     
     //测试自定义头部内容
     UILabel *label = [[UILabel alloc]init];
@@ -74,7 +76,7 @@
     self.navigationItem.titleView = label;
     
     //测试自定义返回按钮会不会影响拖返。PS:默认系统的是会影响的
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
 }
 
 - (void)pop
@@ -110,6 +112,21 @@
     return _button;
 }
 
+- (UIButton *)button2
+{
+    if (!_button2) {
+		UIButton *button = [[UIButton alloc]init];
+		[button setTitle:@"按下2" forState:UIControlStateNormal];
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(pop) forControlEvents:UIControlEventTouchUpInside];
+        button.backgroundColor = [UIColor redColor];
+        
+        
+        _button2 = button;
+    }
+    return _button2;
+}
+
 - (UIImageView *)imageView
 {
     if (!_imageView) {
@@ -135,6 +152,9 @@
     self.button.frame = CGRectMake(0, 0, 100, 40);
     self.button.center = self.view.center;
     
+    CGRect frame = self.button.frame;
+    frame.origin.y += 50;
+    self.button2.frame = frame;
     self.imageView.frame = self.view.bounds;
 }
 

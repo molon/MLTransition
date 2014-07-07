@@ -22,12 +22,12 @@
 		3623A22E195E527600765ABF /* MLTransitionNavigationControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3623A22D195E527600765ABF /* MLTransitionNavigationControllerTests.m */; };
 		365ED6FC195E5B1700B45D30 /* TempViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED6FB195E5B1700B45D30 /* TempViewController.m */; };
 		365ED707195E93AF00B45D30 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 365ED706195E93AF00B45D30 /* MobileCoreServices.framework */; };
-		365ED712195E94FC00B45D30 /* UIViewController+MLTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */; };
 		365ED72A195EC36600B45D30 /* MLTransition.gif in Resources */ = {isa = PBXBuildFile; fileRef = 365ED729195EC36600B45D30 /* MLTransition.gif */; };
 		365ED72B195EC46F00B45D30 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3623A214195E527600765ABF /* Main.storyboard */; };
 		365ED731195FCD9500B45D30 /* IMG_0767.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 365ED72F195FCD9500B45D30 /* IMG_0767.PNG */; };
 		365ED732195FCD9500B45D30 /* IMG_0768.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 365ED730195FCD9500B45D30 /* IMG_0768.PNG */; };
-		365ED74019604A9200B45D30 /* MLTransitionAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 365ED73F19604A9200B45D30 /* MLTransitionAnimation.m */; };
+		36DCD0F8196AD9C200F44F47 /* MLTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DCD0F7196AD9C200F44F47 /* MLTransition.m */; };
+		36DCD0FB196AE11300F44F47 /* MLTransitionAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DCD0FA196AE11300F44F47 /* MLTransitionAnimation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,13 +63,13 @@
 		365ED6FA195E5B1700B45D30 /* TempViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TempViewController.h; sourceTree = "<group>"; };
 		365ED6FB195E5B1700B45D30 /* TempViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TempViewController.m; sourceTree = "<group>"; };
 		365ED706195E93AF00B45D30 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		365ED70E195E94FC00B45D30 /* UIViewController+MLTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MLTransition.h"; sourceTree = "<group>"; };
-		365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MLTransition.m"; sourceTree = "<group>"; };
 		365ED729195EC36600B45D30 /* MLTransition.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = MLTransition.gif; sourceTree = "<group>"; };
 		365ED72F195FCD9500B45D30 /* IMG_0767.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0767.PNG; sourceTree = "<group>"; };
 		365ED730195FCD9500B45D30 /* IMG_0768.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0768.PNG; sourceTree = "<group>"; };
-		365ED73E19604A9200B45D30 /* MLTransitionAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLTransitionAnimation.h; sourceTree = "<group>"; };
-		365ED73F19604A9200B45D30 /* MLTransitionAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLTransitionAnimation.m; sourceTree = "<group>"; };
+		36DCD0F6196AD9C200F44F47 /* MLTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLTransition.h; sourceTree = "<group>"; };
+		36DCD0F7196AD9C200F44F47 /* MLTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLTransition.m; sourceTree = "<group>"; };
+		36DCD0F9196AE11300F44F47 /* MLTransitionAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLTransitionAnimation.h; sourceTree = "<group>"; };
+		36DCD0FA196AE11300F44F47 /* MLTransitionAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLTransitionAnimation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,7 +134,7 @@
 		3623A208195E527600765ABF /* MLTransitionNavigationController */ = {
 			isa = PBXGroup;
 			children = (
-				365ED708195E94FC00B45D30 /* MLTransitionOrig */,
+				36DCD0F5196AD8C800F44F47 /* MLTransition */,
 				3623A214195E527600765ABF /* Main.storyboard */,
 				3623A211195E527600765ABF /* AppDelegate.h */,
 				3623A212195E527600765ABF /* AppDelegate.m */,
@@ -177,16 +177,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		365ED708195E94FC00B45D30 /* MLTransitionOrig */ = {
+		36DCD0F5196AD8C800F44F47 /* MLTransition */ = {
 			isa = PBXGroup;
 			children = (
-				365ED73E19604A9200B45D30 /* MLTransitionAnimation.h */,
-				365ED73F19604A9200B45D30 /* MLTransitionAnimation.m */,
-				365ED70E195E94FC00B45D30 /* UIViewController+MLTransition.h */,
-				365ED70F195E94FC00B45D30 /* UIViewController+MLTransition.m */,
+				36DCD0F6196AD9C200F44F47 /* MLTransition.h */,
+				36DCD0F7196AD9C200F44F47 /* MLTransition.m */,
+				36DCD0F9196AE11300F44F47 /* MLTransitionAnimation.h */,
+				36DCD0FA196AE11300F44F47 /* MLTransitionAnimation.m */,
 			);
-			name = MLTransitionOrig;
-			path = MLTransition;
+			name = MLTransition;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -293,8 +292,8 @@
 				3623A219195E527600765ABF /* ViewController.m in Sources */,
 				3623A213195E527600765ABF /* AppDelegate.m in Sources */,
 				3623A20F195E527600765ABF /* main.m in Sources */,
-				365ED74019604A9200B45D30 /* MLTransitionAnimation.m in Sources */,
-				365ED712195E94FC00B45D30 /* UIViewController+MLTransition.m in Sources */,
+				36DCD0F8196AD9C200F44F47 /* MLTransition.m in Sources */,
+				36DCD0FB196AE11300F44F47 /* MLTransitionAnimation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
