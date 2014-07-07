@@ -53,15 +53,15 @@
     self.view.backgroundColor = bkgColor;
     
 //测试1套
-    self.hideStatusBar = YES;
-    [self setNeedsStatusBarAppearanceUpdate];
-    self.navigationController.navigationBarHidden = YES;
-    [self.view addSubview:self.imageView];
-    
-    UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pressed)];
-    [self.imageView addGestureRecognizer:gesture];
-    return;
-    
+//    self.hideStatusBar = YES;
+//    [self setNeedsStatusBarAppearanceUpdate];
+//    self.navigationController.navigationBarHidden = YES;
+//    [self.view addSubview:self.imageView];
+//    
+//    UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pressed)];
+//    [self.imageView addGestureRecognizer:gesture];
+//    return;
+//    
 
 //测试2套
     [self.view addSubview:self.button];

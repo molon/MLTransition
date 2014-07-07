@@ -134,8 +134,18 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
             //NSLog(@"不是右滑的");
             return NO;
         }
-        if (ABS(velocity.y)>200.0f) {
-            //            NSLog(@"上下速率太高,认作不想开始");
+        //因为上的操作肯定会比较频繁，所以限制大点
+//        if (velocity.y<-100.0f||velocity.y>300.0f) {
+//            //            NSLog(@"上下速率太高,认作不想开始");
+//            return NO;
+//        }
+        
+        
+        CGFloat translationY = [gestureRecognizer translationInView:vc.view].y;
+        CGFloat ratio = (fabs([gestureRecognizer translationInView:vc.view].y)/fabs([gestureRecognizer translationInView:vc.view].x));
+        //因为上的操作肯定会比较频繁，所以限制大点
+        if ((translationY>0&&ratio>0.618f)||(translationY<0&&ratio>0.2f)) {
+//            NSLog(@"右滑角度不在范围内");
             return NO;
         }
     }
@@ -317,7 +327,6 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         
         //建立一个transition的百分比控制对象
         self.percentDrivenInteractivePopTransition = [[UIPercentDrivenInteractiveTransition alloc] init];
-        self.percentDrivenInteractivePopTransition.completionCurve = UIViewAnimationCurveEaseOut;
         
         [self.navigationController popViewControllerAnimated:YES];
         return;
@@ -327,19 +336,31 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         return;
     }
     
-    
-    CGFloat progress = [recognizer translationInView:self.view].x / (self.view.bounds.size.width * 1.0f);
+    CGFloat progress = [recognizer translationInView:self.view].x / (self.view.bounds.size.width * 1.0f)-0.05f; //少点不会显得飘
     progress = MIN(1.0, MAX(0.0, progress));
     
     if (recognizer.state == UIGestureRecognizerStateChanged) {
         //根据拖动调整transition状态
         [self.percentDrivenInteractivePopTransition updateInteractiveTransition:progress];
         
-        //中途上下速率太快就认为想取消
-        CGFloat velocityY = [recognizer velocityInView:self.view].y;
-        if (ABS(velocityY)>500.0f) {
+        //因为上下距离太多，所以取消
+        if (fabs([recognizer translationInView:self.view].y)>120.0f) {
+//            NSLog(@"因为上下距离太多，所以取消");
             [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
             self.percentDrivenInteractivePopTransition = nil;
+            
+        }else{
+            //中途上下速率太快就认为想取消
+            CGFloat velocityY = [recognizer velocityInView:self.view].y;
+            if (fabs(velocityY)>500.0f) {
+                //检测和x速率的比例是不是inf，是的话，说明明显有向下移动的痕迹
+                CGFloat velocityX = [recognizer velocityInView:self.view].x;
+                if (isinf(fabs(velocityY)/fabs(velocityX))) {
+//                    NSLog(@"因为上下速率太快，所以取消");
+                    [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
+                    self.percentDrivenInteractivePopTransition = nil;
+                }
+            }
         }
     }else if ((recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)) {
         //结束或者取消了手势，根据方向和速率来判断应该完成transition还是取消transition
@@ -349,7 +370,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
             //            self.percentDrivenInteractivePopTransition.completionSpeed /= 1.0f;
             [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
         }else if (velocity < -kMLTransitionConstant_Valid_MIN_Velocity){ //向左速率太快就取消
-            self.percentDrivenInteractivePopTransition.completionSpeed /= 1.8f;
+//            self.percentDrivenInteractivePopTransition.completionSpeed /= 1.3f;
             [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
         }else{
             BOOL isFinished = NO;
@@ -357,10 +378,10 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
                 isFinished = YES;
             }
             if (isFinished) {
-//                self.percentDrivenInteractivePopTransition.completionSpeed /= 1.2f;
+                //                self.percentDrivenInteractivePopTransition.completionSpeed /= 1.2f;
                 [self.percentDrivenInteractivePopTransition finishInteractiveTransition];
             }else{
-                self.percentDrivenInteractivePopTransition.completionSpeed /= 2.0f;
+//                self.percentDrivenInteractivePopTransition.completionSpeed /= 1.5f;
                 [self.percentDrivenInteractivePopTransition cancelInteractiveTransition];
             }
         }

@@ -50,16 +50,17 @@
         [containerView insertSubview:toVC.view belowSubview:fromVC.view];
         //设置初始值
         toVC.view.transform = CGAffineTransformMakeTranslation(-toVC.view.frame.size.width*kMLTransitionConstant_LeftVC_Move_Ratio_Of_Width, 0);
+        
     }
     
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
         if (self.type == MLTransitionAnimationTypePush) {
             fromVC.view.transform = CGAffineTransformMakeTranslation(-fromVC.view.frame.size.width*kMLTransitionConstant_LeftVC_Move_Ratio_Of_Width, 0); //向左移10分之3的宽度位置
         }else{
             fromVC.view.transform = CGAffineTransformMakeTranslation(fromVC.view.frame.size.width, 0);
         }
         toVC.view.transform = CGAffineTransformIdentity;
-        
+
     } completion:^(BOOL finished) {
         vc.view.layer.shadowOpacity = 0.0f;
         
