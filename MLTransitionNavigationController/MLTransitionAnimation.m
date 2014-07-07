@@ -54,7 +54,7 @@
         
     }
     
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         if (self.type == MLTransitionAnimationTypePush) {
             fromVC.view.transform = CGAffineTransformMakeTranslation(-fromVC.view.frame.size.width*kMLTransitionConstant_LeftVC_Move_Ratio_Of_Width, 0); //向左移10分之3的宽度位置
         }else{
@@ -62,6 +62,7 @@
         }
         toVC.view.transform = CGAffineTransformIdentity;
         
+
     } completion:^(BOOL finished) {
         vc.view.layer.shadowOpacity = 0.0f;
         

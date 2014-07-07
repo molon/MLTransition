@@ -76,7 +76,7 @@
     self.navigationItem.titleView = label;
     
     //测试自定义返回按钮会不会影响拖返。PS:默认系统的是会影响的
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
     
 }
 
@@ -94,6 +94,10 @@
     
 //    self.navigationController.delegate = nil;
 }
+- (BOOL)hidesBottomBarWhenPushed {
+    
+    return [self.navigationController.visibleViewController isEqual:self];
+}
 
 - (void)pop
 {
@@ -109,7 +113,9 @@
 - (void)pressed
 {
     TempViewController *vc = [[TempViewController alloc]init];
+    self.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
+    self.hidesBottomBarWhenPushed = NO;
 }
 
 - (void)pressed2

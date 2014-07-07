@@ -21,7 +21,6 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    
 }
 
 - (void)didReceiveMemoryWarning
@@ -51,7 +50,7 @@
 #pragma mark - UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-//    UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
+    //    UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
     
     NSLog(@"得到了image");
     [picker dismissViewControllerAnimated:YES completion:NULL];

@@ -128,6 +128,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     self = [super init];
     if (self) {
         self.popInteractiveTransition = [UIPercentDrivenInteractiveTransition new];
+        self.popInteractiveTransition.completionCurve = UIViewAnimationCurveLinear;
         self.animation = [MLTransitionAnimation new];
     }
     return self;
@@ -218,7 +219,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         }else if (velocity < -kTooFastVelocity){ //向左速率太快就取消
             [_popInteractiveTransition cancelInteractiveTransition];
         }else{
-            if (progress > 0.7f || (progress>=0.3f&&velocity>0.0f)) {
+            if (progress > 0.7f || (progress>=0.15f&&velocity>0.0f)) {
                 [_popInteractiveTransition finishInteractiveTransition];
             }else{
                 [_popInteractiveTransition cancelInteractiveTransition];
