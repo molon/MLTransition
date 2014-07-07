@@ -219,7 +219,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         }else if (velocity < -kTooFastVelocity){ //向左速率太快就取消
             [_popInteractiveTransition cancelInteractiveTransition];
         }else{
-            if (progress > 0.7f || (progress>=0.15f&&velocity>0.0f)) {
+            if (progress > 0.7f || (progress>=0.10f&&velocity>0.0f)) {
                 [_popInteractiveTransition finishInteractiveTransition];
             }else{
                 [_popInteractiveTransition cancelInteractiveTransition];

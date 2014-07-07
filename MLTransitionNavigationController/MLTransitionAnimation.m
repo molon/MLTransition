@@ -54,7 +54,11 @@
         
     }
     
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+    UIViewAnimationOptions curve = UIViewAnimationOptionCurveLinear;
+    if (self.type==MLTransitionAnimationTypePush) {
+        curve = UIViewAnimationOptionCurveEaseOut;
+    }
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 options:curve animations:^{
         if (self.type == MLTransitionAnimationTypePush) {
             fromVC.view.transform = CGAffineTransformMakeTranslation(-fromVC.view.frame.size.width*kMLTransitionConstant_LeftVC_Move_Ratio_Of_Width, 0); //向左移10分之3的宽度位置
         }else{
@@ -66,12 +70,13 @@
     } completion:^(BOOL finished) {
         vc.view.layer.shadowOpacity = 0.0f;
         
-        [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
-        
-        
         fromVC.view.transform = CGAffineTransformIdentity; //重置回来,两个都重置是因为动画可能会被取消
         toVC.view.transform = CGAffineTransformIdentity;
+    
+        
+        [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
     }];
+    
 }
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
