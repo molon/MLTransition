@@ -9,7 +9,7 @@
 #import "AppDelegate.h"
 
 //#warning 添加个头文件
-#import "MLTransition.h"
+#import "MLBlackTransition.h"
 
 @implementation AppDelegate
 
@@ -17,7 +17,7 @@
 {
     // Override point for customization after application launch.
     
-    [MLTransition validatePanPackWithMLTransitionGestureRecognizerType:MLTransitionGestureRecognizerTypePan];
+    [MLBlackTransition validatePanPackWithMLBlackTransitionGestureRecognizerType:MLBlackTransitionGestureRecognizerTypePan];
     
     return YES;
 }

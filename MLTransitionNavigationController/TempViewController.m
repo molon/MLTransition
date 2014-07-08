@@ -11,9 +11,6 @@
 @interface TempViewController ()<UINavigationControllerDelegate>
 
 @property (nonatomic, strong) UIButton *button;
-@property (nonatomic, strong) UIButton *button2;
-
-@property (nonatomic, strong) UIPercentDrivenInteractiveTransition *interactivePopTransition;
 
 @property (nonatomic, assign) BOOL hideStatusBar;
 @end
@@ -40,33 +37,27 @@
     }
     
     NSArray *colors = @[
-                        [UIColor colorWithRed:0.004 green:0.656 blue:0.014 alpha:1.000],
-                        [UIColor colorWithRed:0.698 green:0.587 blue:0.170 alpha:1.000],
-                        [UIColor colorWithRed:0.132 green:0.588 blue:0.656 alpha:1.000],
-                        [UIColor colorWithRed:0.221 green:0.437 blue:0.510 alpha:1.000],
-                        [UIColor colorWithRed:0.654 green:0.656 blue:0.487 alpha:1.000],
+                        [UIColor whiteColor],
+                        [UIColor lightGrayColor],
                         ];
     UIColor *bkgColor = colors[arc4random()%colors.count];
-
+    
     while ([bkgColor isEqual:lastColor]) {
         bkgColor = colors[arc4random()%colors.count];
     }
     self.view.backgroundColor = bkgColor;
     
-//测试1套
-    self.hideStatusBar = YES;
-    [self setNeedsStatusBarAppearanceUpdate];
-    self.navigationController.navigationBarHidden = YES;
-    [self.view addSubview:self.imageView];
+    //测试1套
+//    self.hideStatusBar = YES;
+//    [self.view addSubview:self.imageView];
+//    
+//    UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pressed)];
+//    [self.imageView addGestureRecognizer:gesture];
+//    return;
+//    
     
-    UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pressed)];
-    [self.imageView addGestureRecognizer:gesture];
-    return;
-    
-
-//测试2套
+    //测试2套
     [self.view addSubview:self.button];
-    [self.view addSubview:self.button2];
     
     //测试自定义头部内容
     UILabel *label = [[UILabel alloc]init];
@@ -76,26 +67,29 @@
     self.navigationItem.titleView = label;
     
     //测试自定义返回按钮会不会影响拖返。PS:默认系统的是会影响的
-//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
     
 }
 
-//下面俩测试如果自己使用delegate，自动修正的效果
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
-//    self.navigationController.delegate = self;
+    if (self.hideStatusBar) {
+        [self.navigationController setNavigationBarHidden:YES animated:animated];
+//        if (animated) {
+//            [UIView animateWithDuration:0.25f animations:^{
+//                [self setNeedsStatusBarAppearanceUpdate];
+//            }];
+//        }else{
+            [self setNeedsStatusBarAppearanceUpdate];
+//        }
+    }else{
+        [[self navigationController] setNavigationBarHidden:[self.navigationController.viewControllers indexOfObject:self]%2==0 animated:animated];
+    }
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-//    self.navigationController.delegate = nil;
-}
 - (BOOL)hidesBottomBarWhenPushed {
-    
     return [self.navigationController.visibleViewController isEqual:self];
 }
 
@@ -113,16 +107,9 @@
 - (void)pressed
 {
     TempViewController *vc = [[TempViewController alloc]init];
-    self.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
-    self.hidesBottomBarWhenPushed = NO;
 }
 
-- (void)pressed2
-{
-    //测试是否能自动纠正为我们自己的单例
-    self.navigationController.delegate = nil;
-}
 
 - (UIButton *)button
 {
@@ -137,21 +124,6 @@
         _button = button;
     }
     return _button;
-}
-
-- (UIButton *)button2
-{
-    if (!_button2) {
-		UIButton *button = [[UIButton alloc]init];
-		[button setTitle:@"按下2" forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [button addTarget:self action:@selector(pressed2) forControlEvents:UIControlEventTouchUpInside];
-        button.backgroundColor = [UIColor redColor];
-        
-        
-        _button2 = button;
-    }
-    return _button2;
 }
 
 - (UIImageView *)imageView
@@ -179,9 +151,6 @@
     self.button.frame = CGRectMake(0, 0, 100, 40);
     self.button.center = self.view.center;
     
-    CGRect frame = self.button.frame;
-    frame.origin.y += 50;
-    self.button2.frame = frame;
     self.imageView.frame = self.view.bounds;
 }
 
