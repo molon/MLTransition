@@ -28,6 +28,7 @@
 		365ED732195FCD9500B45D30 /* IMG_0768.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 365ED730195FCD9500B45D30 /* IMG_0768.PNG */; };
 		36DCD178196C614B00F44F47 /* MLBlackTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DCD175196C614B00F44F47 /* MLBlackTransition.m */; };
 		36DCD179196C614B00F44F47 /* TempTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DCD177196C614B00F44F47 /* TempTableViewController.m */; };
+		36DCD17F196C66E000F44F47 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 36DCD17E196C66E000F44F47 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 		36DCD175196C614B00F44F47 /* MLBlackTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLBlackTransition.m; sourceTree = "<group>"; };
 		36DCD176196C614B00F44F47 /* TempTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TempTableViewController.h; sourceTree = "<group>"; };
 		36DCD177196C614B00F44F47 /* TempTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TempTableViewController.m; sourceTree = "<group>"; };
+		36DCD17E196C66E000F44F47 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +102,7 @@
 		3623A1F6195E527600765ABF = {
 			isa = PBXGroup;
 			children = (
+				36DCD17E196C66E000F44F47 /* README.md */,
 				365ED729195EC36600B45D30 /* MLTransition.gif */,
 				365ED72F195FCD9500B45D30 /* IMG_0767.PNG */,
 				365ED730195FCD9500B45D30 /* IMG_0768.PNG */,
@@ -267,6 +270,7 @@
 				365ED72A195EC36600B45D30 /* MLTransition.gif in Resources */,
 				3623A21B195E527600765ABF /* Images.xcassets in Resources */,
 				3623A20D195E527600765ABF /* InfoPlist.strings in Resources */,
+				36DCD17F196C66E000F44F47 /* README.md in Resources */,
 				365ED731195FCD9500B45D30 /* IMG_0767.PNG in Resources */,
 				365ED732195FCD9500B45D30 /* IMG_0768.PNG in Resources */,
 				365ED72B195EC46F00B45D30 /* Main.storyboard in Resources */,
