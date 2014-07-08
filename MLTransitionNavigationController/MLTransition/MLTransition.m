@@ -186,9 +186,6 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     progress = MIN(1.0, MAX(0.0, progress));
     
     if (recognizer.state == UIGestureRecognizerStateChanged) {
-        //根据拖动调整transition状态
-        [_popInteractiveTransition updateInteractiveTransition:progress];
-        
         //因为上下距离太多，所以取消
         if (fabs([recognizer translationInView:navVC.view].y)>120.0f) {
             //            NSLog(@"因为上下距离太多，所以取消");
@@ -206,6 +203,11 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
                     _isInteractiving = NO;
                 }
             }
+        }
+        
+        if (_isInteractiving) {
+            //根据拖动调整transition状态
+            [_popInteractiveTransition updateInteractiveTransition:progress];
         }
     }else if ((recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)) {
         //结束或者取消了手势，根据方向和速率来判断应该完成transition还是取消transition

@@ -68,13 +68,12 @@
         
 
     } completion:^(BOOL finished) {
+        [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
+        
         vc.view.layer.shadowOpacity = 0.0f;
         
         fromVC.view.transform = CGAffineTransformIdentity; //重置回来,两个都重置是因为动画可能会被取消
         toVC.view.transform = CGAffineTransformIdentity;
-    
-        
-        [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
     }];
     
 }
