@@ -117,8 +117,9 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
         gestureRecognizer.__MLBlackTransition_NavController = self;
         
         self.__MLBlackTransition_panGestureRecognizer = gestureRecognizer;
-        [self.view addGestureRecognizer:gestureRecognizer];
     }
+    
+    [self.view addGestureRecognizer:self.__MLBlackTransition_panGestureRecognizer];
 }
 
 #pragma mark GestureRecognizer delegate
