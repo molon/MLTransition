@@ -56,7 +56,7 @@
     
     UIViewAnimationOptions curve = UIViewAnimationOptionCurveLinear;
     if (self.type==MLTransitionAnimationTypePush) {
-        curve = UIViewAnimationOptionCurveEaseOut;
+        curve = UIViewAnimationOptionCurveEaseInOut;
     }
     [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 options:curve animations:^{
         if (self.type == MLTransitionAnimationTypePush) {

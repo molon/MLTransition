@@ -152,10 +152,11 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
             return NO;
         }
         
-        CGFloat translationY = [recognizer translationInView:navVC.view].y;
-        CGFloat ratio = (fabs([recognizer translationInView:navVC.view].y)/fabs([recognizer translationInView:navVC.view].x));
+        CGPoint translation = [recognizer translationInView:navVC.view];
+        translation.x = translation.x==0?0.00001f:translation.x;
+        CGFloat ratio = (fabs(translation.y)/fabs(translation.x));
         //因为上滑的操作相对会比较频繁，所以角度限制少点
-        if ((translationY>0&&ratio>0.618f)||(translationY<0&&ratio>0.2f)) {
+        if ((translation.y>0&&ratio>0.618f)||(translation.y<0&&ratio>0.2f)) {
             //NSLog(@"右滑角度不在范围内");
             return NO;
         }
@@ -186,7 +187,7 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
     
     if (recognizer.state == UIGestureRecognizerStateChanged) {
         //根据拖动调整transition状态
-        //        [_popInteractiveTransition updateInteractiveTransition:progress];
+        [_popInteractiveTransition updateInteractiveTransition:progress];
         
         //因为上下距离太多，所以取消
         if (fabs([recognizer translationInView:navVC.view].y)>120.0f) {
@@ -195,31 +196,28 @@ void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
             _isInteractiving = NO;
         }else{
             //中途上下速率太快就认为想取消
-            CGFloat velocityY = [recognizer velocityInView:navVC.view].y;
-            if (fabs(velocityY)>500.0f) {
+            CGPoint velocity = [recognizer velocityInView:navVC.view];
+            if (fabs(velocity.y)>500.0f) {
                 //检测和x速率的比例是不是inf，是的话，说明明显有向下移动的痕迹
-                CGFloat velocityX = [recognizer velocityInView:navVC.view].x;
-                if (isinf(fabs(velocityY)/fabs(velocityX))) {
+                velocity.x = velocity.x==0?0.000001f:velocity.x;
+                if (isinf(fabs(velocity.y)/fabs(velocity.x))) {
                     //                    NSLog(@"因为上下速率太快，所以取消");
                     [_popInteractiveTransition cancelInteractiveTransition];
                     _isInteractiving = NO;
                 }
             }
         }
-        if (_isInteractiving) {
-            [_popInteractiveTransition updateInteractiveTransition:progress];
-        }
     }else if ((recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)) {
         //结束或者取消了手势，根据方向和速率来判断应该完成transition还是取消transition
-        CGFloat velocity = [recognizer velocityInView:navVC.view].x; //我们只关心x的速率
+        CGFloat velocityX = [recognizer velocityInView:navVC.view].x; //我们只关心x的速率
         
 #define kTooFastVelocity 350.0f
-        if (velocity > kTooFastVelocity) { //向右速率太快就完成
+        if (velocityX > kTooFastVelocity) { //向右速率太快就完成
             [_popInteractiveTransition finishInteractiveTransition];
-        }else if (velocity < -kTooFastVelocity){ //向左速率太快就取消
+        }else if (velocityX < -kTooFastVelocity){ //向左速率太快就取消
             [_popInteractiveTransition cancelInteractiveTransition];
         }else{
-            if (progress > 0.7f || (progress>=0.10f&&velocity>0.0f)) {
+            if (progress > 0.7f || (progress>=0.10f&&velocityX>0.0f)) {
                 [_popInteractiveTransition finishInteractiveTransition];
             }else{
                 [_popInteractiveTransition cancelInteractiveTransition];
@@ -338,7 +336,7 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
         
         self.__MLTransition_panGestureRecognizer = gestureRecognizer;
         [self.view addGestureRecognizer:gestureRecognizer];
-    
+        
         //放在这里是为了保证只会执行一次
         //自动对delegate进行监视，如果发现其被置为nil，则用我们的单例作为delegate
         //PS要记住，其delegate是assgin属性的，不用时候记得重置为nil
@@ -369,7 +367,7 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
 {
     if ([@"delegate" isEqualToString:keyPath]) {
         id new = [change objectForKey:NSKeyValueChangeNewKey];
-//        NSLog(@"%@",new);
+        //        NSLog(@"%@",new);
         if ([new isKindOfClass:[NSNull class]]) {
             self.delegate = [MLTransition shareInstance];
         }
