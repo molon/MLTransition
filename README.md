@@ -10,7 +10,7 @@ MLTransition
 
 PS:最新更新暂时摒弃MLTransition(未添加在工程里)，使用MLBlackTransition。
 
-MLBlackTransition是用比较黑的法子实现的，效果除了能达到我们的目的之外和官方的无任何区别。   
+MLBlackTransition是用比较黑的法子实现的，效果除了能达到我们的目的之外和官方的无任何区别。
 
 例如像UINavigationBar隐藏时候的动画问题，UITabBar隐藏时候动画问题，这个统统不存在，但是有一点，在下不知道苹果那边这种审核会拒绝么。
 

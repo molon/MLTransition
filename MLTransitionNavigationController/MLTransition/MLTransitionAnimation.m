@@ -20,7 +20,7 @@
 #define kMLTransitionConstant_RightVC_ShadowRadius 3.0f
 #define kMLTransitionConstant_RightVC_ShadowOpacity 0.3f
 
-#warning 注意，经过测试发现此动画性能有时会很差，甚至偶尔会出现取消拖返时候动画黑边。把transform换做frame做动画可能会好很多。而且在UINavigationBar和UITabBar隐藏时候会有动画问题。暂时没时间研究处理此事。已经发现了更好的方式实现效果。参见MLBlackTransition。https://github.com/molon/MLBlackTransition
+#warning 注意，经过测试发现此动画性能有时会很差，甚至偶尔会出现取消拖返时候动画黑边。把transform换做frame做动画可能会好很多。而且在UINavigationBar和UITabBar隐藏时候会有动画问题。暂时没时间研究处理此事。已经发现了更好的方式实现效果。参见MLBlackTransition。
 @implementation MLTransitionAnimation
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {

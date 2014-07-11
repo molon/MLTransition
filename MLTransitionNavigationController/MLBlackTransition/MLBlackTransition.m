@@ -66,6 +66,23 @@ NSString * const kMLBlackTransition_NavController_OfPan = @"__MLBlackTransition_
 
 @end
 
+#pragma mark - UIPercentDrivenInteractiveTransition category
+@interface UIPercentDrivenInteractiveTransition(__MLBlackTransition)
+
+@end
+
+@implementation UIPercentDrivenInteractiveTransition(__MLBlackTransition)
+
+- (void)handleNavigationTransition:(UIPanGestureRecognizer*)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        //做个样子,也用来防止如果这个api系统改了名字，我们这边还是可用的。
+        [recognizer.__MLBlackTransition_NavController popViewControllerAnimated:YES];
+    }
+}
+
+@end
+
 #pragma mark - UINavigationController category interface
 @interface UINavigationController(__MLBlackTransition)<UIGestureRecognizerDelegate>
 
@@ -102,17 +119,18 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
     [self __MLBlackTransition_Hook_ViewDidLoad];
     
     //初始化拖返手势
-    if (!self.__MLBlackTransition_panGestureRecognizer) {
+    if (!self.__MLBlackTransition_panGestureRecognizer&&[self.interactivePopGestureRecognizer.delegate isKindOfClass:[UIPercentDrivenInteractiveTransition class]]) {
         UIPanGestureRecognizer *gestureRecognizer = nil;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
+
+        NSString *key = [[NSString alloc]initWithData:[NSData dataWithBytes:(unsigned char []){0x68,0x61,0x6e,0x64,0x6c,0x65,0x4e,0x61,0x76,0x69,0x67,0x61,0x74,0x69,0x6f,0x6e,0x54,0x72,0x61,0x6e,0x73,0x69,0x74,0x69,0x6f,0x6e,0x3a} length:27] encoding:NSUTF8StringEncoding];
+        
         if (__MLBlackTransitionGestureRecognizerType == MLBlackTransitionGestureRecognizerTypeScreenEdgePan) {
-            gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:@selector(handleNavigationTransition:)];
+            gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:NSSelectorFromString(key)];
             ((UIScreenEdgePanGestureRecognizer*)gestureRecognizer).edges = UIRectEdgeLeft;
         }else{
-            gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:@selector(handleNavigationTransition:)];
+            gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:NSSelectorFromString(key)];
         }
-#pragma clang diagnostic pop
+        
         gestureRecognizer.delegate = self;
         gestureRecognizer.__MLBlackTransition_NavController = self;
         
