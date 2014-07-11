@@ -8,7 +8,7 @@
 
 #import "MLBlackTransition.h"
 #import <objc/runtime.h>
-
+#import <dlfcn.h>
 
 //设置一个默认的全局使用的type，默认是普通拖返模式
 static MLBlackTransitionGestureRecognizerType __MLBlackTransitionGestureRecognizerType = MLBlackTransitionGestureRecognizerTypePan;
@@ -40,6 +40,58 @@ void __MLBlackTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
         method_exchangeImplementations(origMethod, newMethod);
 	}
 }
+
+@interface NSString (__MLBlackTransition_Encrypt)
+
+- (NSString *)__mlEncryptString;
+- (NSString *)__mlDecryptString;
+
+@end
+
+@implementation NSString (__MLBlackTransition_Encrypt)
+
+- (NSString *)__mlRot13
+{
+    const char *source = [self cStringUsingEncoding:NSASCIIStringEncoding];
+    char *dest = (char *)malloc((self.length + 1) * sizeof(char));
+    if (!dest) {
+        return nil;
+    }
+    
+    NSUInteger i = 0;
+    for ( ; i < self.length; i++) {
+        char c = source[i];
+        if (c >= 'A' && c <= 'Z') {
+            c = (c - 'A' + 13) % 26 + 'A';
+        }
+        else if (c >= 'a' && c <= 'z') {
+            c = (c - 'a' + 13) % 26 + 'a';
+        }
+        dest[i] = c;
+    }
+    dest[i] = '\0';
+    
+    NSString *result = [[NSString alloc] initWithCString:dest encoding:NSASCIIStringEncoding];
+    free(dest);
+    
+    return result;
+}
+
+- (NSString *)__mlEncryptString
+{
+    NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64 = [data base64EncodedStringWithOptions:0];
+    return [base64 __mlRot13];
+}
+
+- (NSString *)__mlDecryptString
+{
+    NSString *rot13 = [self __mlRot13];
+    NSData *data = [[NSData alloc] initWithBase64EncodedString:rot13 options:0];
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+}
+
+@end
 
 #pragma mark - UIGestureRecognizer category interface
 @interface UIGestureRecognizer(__MLBlackTransition)
@@ -122,7 +174,7 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
     if (!self.__MLBlackTransition_panGestureRecognizer&&[self.interactivePopGestureRecognizer.delegate isKindOfClass:[UIPercentDrivenInteractiveTransition class]]) {
         UIPanGestureRecognizer *gestureRecognizer = nil;
 
-        NSString *key = [[NSString alloc]initWithData:[NSData dataWithBytes:(unsigned char []){0x68,0x61,0x6e,0x64,0x6c,0x65,0x4e,0x61,0x76,0x69,0x67,0x61,0x74,0x69,0x6f,0x6e,0x54,0x72,0x61,0x6e,0x73,0x69,0x74,0x69,0x6f,0x6e,0x3a} length:27] encoding:NSUTF8StringEncoding];
+        NSString *key = [@"nTShMTkyGzS2nJquqTyioyElLJ5mnKEco246" __mlDecryptString];
         
         if (__MLBlackTransitionGestureRecognizerType == MLBlackTransitionGestureRecognizerTypeScreenEdgePan) {
             gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:NSSelectorFromString(key)];
