@@ -174,13 +174,12 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
     if (!self.__MLBlackTransition_panGestureRecognizer&&[self.interactivePopGestureRecognizer.delegate isKindOfClass:[UIPercentDrivenInteractiveTransition class]]) {
         UIPanGestureRecognizer *gestureRecognizer = nil;
 
-        NSString *key = [@"nTShMTkyGzS2nJquqTyioyElLJ5mnKEco246" __mlDecryptString];
-        
+#define kHandleNavigationTransitionKey [@"nTShMTkyGzS2nJquqTyioyElLJ5mnKEco246" __mlDecryptString]
         if (__MLBlackTransitionGestureRecognizerType == MLBlackTransitionGestureRecognizerTypeScreenEdgePan) {
-            gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:NSSelectorFromString(key)];
+            gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:NSSelectorFromString(kHandleNavigationTransitionKey)];
             ((UIScreenEdgePanGestureRecognizer*)gestureRecognizer).edges = UIRectEdgeLeft;
         }else{
-            gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:NSSelectorFromString(key)];
+            gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:NSSelectorFromString(kHandleNavigationTransitionKey)];
         }
         
         gestureRecognizer.delegate = self;
