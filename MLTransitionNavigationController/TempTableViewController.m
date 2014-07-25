@@ -97,8 +97,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if ([tableView isEqual:self]) {
-        return 0;
+    if ([tableView isEqual:self.tableView]) {
+        return 4;
     }
     
     return self.cellCount;
