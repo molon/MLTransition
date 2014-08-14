@@ -26,9 +26,9 @@
 		365ED72B195EC46F00B45D30 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3623A214195E527600765ABF /* Main.storyboard */; };
 		365ED731195FCD9500B45D30 /* IMG_0767.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 365ED72F195FCD9500B45D30 /* IMG_0767.PNG */; };
 		365ED732195FCD9500B45D30 /* IMG_0768.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 365ED730195FCD9500B45D30 /* IMG_0768.PNG */; };
+		36AEE04D199CF34F000591E5 /* MLBlackTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 36AEE04C199CF34F000591E5 /* MLBlackTransition.m */; };
 		36DCD179196C614B00F44F47 /* TempTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DCD177196C614B00F44F47 /* TempTableViewController.m */; };
 		36DCD17F196C66E000F44F47 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 36DCD17E196C66E000F44F47 /* README.md */; };
-		7D0DFE6F19822BFC00E9178E /* MLBlackTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D0DFE6E19822BFC00E9178E /* MLBlackTransition.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,11 +67,11 @@
 		365ED729195EC36600B45D30 /* MLTransition.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = MLTransition.gif; sourceTree = "<group>"; };
 		365ED72F195FCD9500B45D30 /* IMG_0767.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0767.PNG; sourceTree = "<group>"; };
 		365ED730195FCD9500B45D30 /* IMG_0768.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0768.PNG; sourceTree = "<group>"; };
+		36AEE04B199CF34F000591E5 /* MLBlackTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLBlackTransition.h; sourceTree = "<group>"; };
+		36AEE04C199CF34F000591E5 /* MLBlackTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLBlackTransition.m; sourceTree = "<group>"; };
 		36DCD176196C614B00F44F47 /* TempTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TempTableViewController.h; sourceTree = "<group>"; };
 		36DCD177196C614B00F44F47 /* TempTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TempTableViewController.m; sourceTree = "<group>"; };
 		36DCD17E196C66E000F44F47 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		7D0DFE6D19822BFC00E9178E /* MLBlackTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLBlackTransition.h; sourceTree = "<group>"; };
-		7D0DFE6E19822BFC00E9178E /* MLBlackTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLBlackTransition.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,7 +106,7 @@
 				365ED729195EC36600B45D30 /* MLTransition.gif */,
 				365ED72F195FCD9500B45D30 /* IMG_0767.PNG */,
 				365ED730195FCD9500B45D30 /* IMG_0768.PNG */,
-				7D0DFE6C19822BFC00E9178E /* MLBlackTransition */,
+				36AEE04A199CF34F000591E5 /* MLBlackTransition */,
 				3623A208195E527600765ABF /* MLTransitionNavigationController */,
 				3623A227195E527600765ABF /* MLTransitionNavigationControllerTests */,
 				3623A201195E527600765ABF /* Frameworks */,
@@ -182,11 +182,11 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		7D0DFE6C19822BFC00E9178E /* MLBlackTransition */ = {
+		36AEE04A199CF34F000591E5 /* MLBlackTransition */ = {
 			isa = PBXGroup;
 			children = (
-				7D0DFE6D19822BFC00E9178E /* MLBlackTransition.h */,
-				7D0DFE6E19822BFC00E9178E /* MLBlackTransition.m */,
+				36AEE04B199CF34F000591E5 /* MLBlackTransition.h */,
+				36AEE04C199CF34F000591E5 /* MLBlackTransition.m */,
 			);
 			path = MLBlackTransition;
 			sourceTree = "<group>";
@@ -295,7 +295,7 @@
 				365ED6FC195E5B1700B45D30 /* TempViewController.m in Sources */,
 				3623A219195E527600765ABF /* ViewController.m in Sources */,
 				3623A213195E527600765ABF /* AppDelegate.m in Sources */,
-				7D0DFE6F19822BFC00E9178E /* MLBlackTransition.m in Sources */,
+				36AEE04D199CF34F000591E5 /* MLBlackTransition.m in Sources */,
 				3623A20F195E527600765ABF /* main.m in Sources */,
 				36DCD179196C614B00F44F47 /* TempTableViewController.m in Sources */,
 			);

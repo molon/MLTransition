@@ -18,3 +18,16 @@ typedef enum {
 + (void)validatePanPackWithMLBlackTransitionGestureRecognizerType:(MLBlackTransitionGestureRecognizerType)type;
 
 @end
+
+@interface UIView(__MLBlackTransition)
+
+//使得此view不响应拖返
+@property (nonatomic, assign) BOOL disableMLBlackTransition;
+
+@end
+
+@interface UINavigationController(DisableMLBlackTransition)
+
+- (void)enabledMLBlackTransition:(BOOL)enabled;
+
+@end

@@ -93,12 +93,31 @@ void __MLBlackTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 
 @end
 
+#pragma mark - UIView category implementation
+NSString * const kMLBlackTransition_UIView_DisableMLBlackTransition = @"__MLBlackTransition_UIView_DisableMLBlackTransition";
+@implementation UIView(__MLBlackTransition)
+
+- (BOOL)disableMLBlackTransition
+{
+	return [objc_getAssociatedObject(self, &kMLBlackTransition_UIView_DisableMLBlackTransition) boolValue];
+}
+
+- (void)setDisableMLBlackTransition:(BOOL)disableMLBlackTransition
+{
+    [self willChangeValueForKey:kMLBlackTransition_UIView_DisableMLBlackTransition];
+	objc_setAssociatedObject(self, &kMLBlackTransition_UIView_DisableMLBlackTransition, @(disableMLBlackTransition), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self didChangeValueForKey:kMLBlackTransition_UIView_DisableMLBlackTransition];
+}
+
+@end
+
 #pragma mark - UIGestureRecognizer category interface
 @interface UIGestureRecognizer(__MLBlackTransition)
 
 @property (nonatomic, assign) UINavigationController *__MLBlackTransition_NavController;
 
 @end
+
 #pragma mark - UIGestureRecognizer category implementation
 NSString * const kMLBlackTransition_NavController_OfPan = @"__MLBlackTransition_NavController_OfPan";
 
@@ -186,6 +205,8 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
         gestureRecognizer.__MLBlackTransition_NavController = self;
         
         self.__MLBlackTransition_panGestureRecognizer = gestureRecognizer;
+        
+        self.interactivePopGestureRecognizer.enabled = NO;
     }
     
     [self.view addGestureRecognizer:self.__MLBlackTransition_panGestureRecognizer];
@@ -195,9 +216,15 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
 - (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)recognizer
 {
     UINavigationController *navVC = self;
-    
     if ([navVC.transitionCoordinator isAnimated]||
         navVC.viewControllers.count < 2) {
+        return NO;
+    }
+    
+    UIView* view = recognizer.view;
+    CGPoint loc = [recognizer locationInView:view];
+    UIView* subview = [view hitTest:loc withEvent:nil];
+    if (subview.disableMLBlackTransition){ //这个view忽略了拖返
         return NO;
     }
     
@@ -223,6 +250,15 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
 }
 @end
 
+@implementation UINavigationController(DisableMLBlackTransition)
+
+#pragma mark - outcall
+- (void)enabledMLBlackTransition:(BOOL)enabled
+{
+    self.__MLBlackTransition_panGestureRecognizer.enabled = enabled;
+}
+
+@end
 
 @implementation MLBlackTransition
 
@@ -256,8 +292,16 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     if ([gestureRecognizer isEqual:self.panGestureRecognizer]) {
-        if (self.contentSize.width>self.frame.size.width) { //如果此scrollView有横向滚动的可能当然就需要忽略了。
-            return NO;
+        //如果此scrollView有横向滚动的可能当然就需要忽略了。
+        if (CGAffineTransformEqualToTransform(CGAffineTransformMakeRotation(-M_PI*0.5),self.transform)||CGAffineTransformEqualToTransform(CGAffineTransformMakeRotation(M_PI*0.5),self.transform)) {
+//            if (self.contentSize.height>self.frame.size.width) {
+            //暂时对于这一种比较喜欢直接就不支持拖返吧，感觉体验好点。
+                return NO;
+//            }
+        }else{
+            if (self.contentSize.width>self.frame.size.width) {
+                return NO;
+            }
         }
         if (otherGestureRecognizer.__MLBlackTransition_NavController) {
             //说明这玩意是我们的手势
