@@ -222,10 +222,17 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
     }
     
     UIView* view = recognizer.view;
+    if (view.disableMLBlackTransition) {
+        return NO;
+    }
     CGPoint loc = [recognizer locationInView:view];
     UIView* subview = [view hitTest:loc withEvent:nil];
-    if (subview.disableMLBlackTransition){ //这个view忽略了拖返
-        return NO;
+    UIView *superView = subview;
+    while (superView!=view) {
+        if (superView.disableMLBlackTransition) { //这个view忽略了拖返
+            return NO;
+        }
+        superView = superView.superview;
     }
     
     //普通拖曳模式，如果开始方向不对即不启用
