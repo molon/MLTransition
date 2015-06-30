@@ -8,7 +8,7 @@
 
 // MLTransition
 #define COCOAPODS_POD_AVAILABLE_MLTransition
-#define COCOAPODS_VERSION_MAJOR_MLTransition 1
+#define COCOAPODS_VERSION_MAJOR_MLTransition 2
 #define COCOAPODS_VERSION_MINOR_MLTransition 0
 #define COCOAPODS_VERSION_PATCH_MLTransition 0
 

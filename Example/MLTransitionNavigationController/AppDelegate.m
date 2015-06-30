@@ -9,16 +9,15 @@
 #import "AppDelegate.h"
 #import "UINavigationController+StatusBar.h"
 
-//#warning 添加个头文件
-#import "MLBlackTransition.h"
+#import <MLTransition.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    
-    [MLBlackTransition validatePanPackWithMLBlackTransitionGestureRecognizerType:MLBlackTransitionGestureRecognizerTypePan];
+    //一句话启用
+    [MLTransition validatePanPackWithMLTransitionGestureRecognizerType:MLTransitionGestureRecognizerTypePan];
     
     
     //简单搞下demo颜色

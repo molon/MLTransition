@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name         = "MLTransition"
-s.version      = "1.0"
+s.version      = "2.0"
 s.summary      = "iOS7+可用, 拖返可直接从中间拖返。一句代码即可启用此功能。可随意设置leftBarButtonItem，也可使用边界拖返模式。(非截图实现，拖返过程中显示的view都是活动的) "
 s.homepage     = "https://github.com/molon/MLTransition"
 s.license      = "MIT"

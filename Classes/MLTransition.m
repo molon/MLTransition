@@ -1,21 +1,21 @@
 //
-//  MLBlackTransition.m
-//  MLBlackTransition
+//  MLTransition.m
+//  MLTransition
 //
 //  Created by molon on 7/8/14.
 //  Copyright (c) 2014 molon. All rights reserved.
 //
 
-#import "MLBlackTransition.h"
+#import "MLTransition.h"
 #import <objc/runtime.h>
 #import <dlfcn.h>
 
 //设置一个默认的全局使用的type，默认是普通拖返模式
-static MLBlackTransitionGestureRecognizerType __MLBlackTransitionGestureRecognizerType = MLBlackTransitionGestureRecognizerTypePan;
+static MLTransitionGestureRecognizerType __MLTransitionGestureRecognizerType = MLTransitionGestureRecognizerTypePan;
 
 #pragma mark - hook大法
 //静态就交换静态，实例方法就交换实例方法
-void __MLBlackTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
+void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 {
     //获取实例方法
     Method origMethod = class_getInstanceMethod(c, origSEL);
@@ -41,14 +41,14 @@ void __MLBlackTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 	}
 }
 
-@interface NSString (__MLBlackTransition_Encrypt)
+@interface NSString (__MLTransition_Encrypt)
 
 - (NSString *)__mlEncryptString;
 - (NSString *)__mlDecryptString;
 
 @end
 
-@implementation NSString (__MLBlackTransition_Encrypt)
+@implementation NSString (__MLTransition_Encrypt)
 
 - (NSString *)__mlRot13
 {
@@ -94,107 +94,107 @@ void __MLBlackTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
 @end
 
 #pragma mark - UIView category implementation
-NSString * const kMLBlackTransition_UIView_DisableMLBlackTransition = @"__MLBlackTransition_UIView_DisableMLBlackTransition";
-@implementation UIView(__MLBlackTransition)
+NSString * const kMLTransition_UIView_DisableMLTransition = @"__MLTransition_UIView_DisableMLTransition";
+@implementation UIView(__MLTransition)
 
-- (BOOL)disableMLBlackTransition
+- (BOOL)disableMLTransition
 {
-	return [objc_getAssociatedObject(self, &kMLBlackTransition_UIView_DisableMLBlackTransition) boolValue];
+	return [objc_getAssociatedObject(self, &kMLTransition_UIView_DisableMLTransition) boolValue];
 }
 
-- (void)setDisableMLBlackTransition:(BOOL)disableMLBlackTransition
+- (void)setDisableMLTransition:(BOOL)disableMLTransition
 {
-    [self willChangeValueForKey:kMLBlackTransition_UIView_DisableMLBlackTransition];
-	objc_setAssociatedObject(self, &kMLBlackTransition_UIView_DisableMLBlackTransition, @(disableMLBlackTransition), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    [self didChangeValueForKey:kMLBlackTransition_UIView_DisableMLBlackTransition];
+    [self willChangeValueForKey:kMLTransition_UIView_DisableMLTransition];
+	objc_setAssociatedObject(self, &kMLTransition_UIView_DisableMLTransition, @(disableMLTransition), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self didChangeValueForKey:kMLTransition_UIView_DisableMLTransition];
 }
 
 @end
 
 #pragma mark - UIGestureRecognizer category interface
-@interface UIGestureRecognizer(__MLBlackTransition)
+@interface UIGestureRecognizer(__MLTransition)
 
-@property (nonatomic, assign) UINavigationController *__MLBlackTransition_NavController;
+@property (nonatomic, assign) UINavigationController *__MLTransition_NavController;
 
 @end
 
 #pragma mark - UIGestureRecognizer category implementation
-NSString * const kMLBlackTransition_NavController_OfPan = @"__MLBlackTransition_NavController_OfPan";
+NSString * const kMLTransition_NavController_OfPan = @"__MLTransition_NavController_OfPan";
 
-@implementation UIGestureRecognizer(__MLBlackTransition)
+@implementation UIGestureRecognizer(__MLTransition)
 
-- (void)set__MLBlackTransition_NavController:(UINavigationController *)__MLBlackTransition_NavController
+- (void)set__MLTransition_NavController:(UINavigationController *)__MLTransition_NavController
 {
-    [self willChangeValueForKey:kMLBlackTransition_NavController_OfPan];
-	objc_setAssociatedObject(self, &kMLBlackTransition_NavController_OfPan, __MLBlackTransition_NavController, OBJC_ASSOCIATION_ASSIGN);
-    [self didChangeValueForKey:kMLBlackTransition_NavController_OfPan];
+    [self willChangeValueForKey:kMLTransition_NavController_OfPan];
+	objc_setAssociatedObject(self, &kMLTransition_NavController_OfPan, __MLTransition_NavController, OBJC_ASSOCIATION_ASSIGN);
+    [self didChangeValueForKey:kMLTransition_NavController_OfPan];
 }
 
-- (UIViewController *)__MLBlackTransition_NavController
+- (UIViewController *)__MLTransition_NavController
 {
-	return objc_getAssociatedObject(self, &kMLBlackTransition_NavController_OfPan);
+	return objc_getAssociatedObject(self, &kMLTransition_NavController_OfPan);
 }
 
 @end
 
 #pragma mark - UIPercentDrivenInteractiveTransition category
-@interface UIPercentDrivenInteractiveTransition(__MLBlackTransition)
+@interface UIPercentDrivenInteractiveTransition(__MLTransition)
 
 @end
 
-@implementation UIPercentDrivenInteractiveTransition(__MLBlackTransition)
+@implementation UIPercentDrivenInteractiveTransition(__MLTransition)
 
 - (void)handleNavigationTransition:(UIPanGestureRecognizer*)recognizer
 {
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         //做个样子,也用来防止如果这个api系统改了名字，我们这边还是可用的。
-        [recognizer.__MLBlackTransition_NavController popViewControllerAnimated:YES];
+        [recognizer.__MLTransition_NavController popViewControllerAnimated:YES];
     }
 }
 
 @end
 
 #pragma mark - UINavigationController category interface
-@interface UINavigationController(__MLBlackTransition)<UIGestureRecognizerDelegate>
+@interface UINavigationController(__MLTransition)<UIGestureRecognizerDelegate>
 
 /**
  *  每个导航器都添加一个拖动手势
  */
-@property (nonatomic, strong) UIPanGestureRecognizer *__MLBlackTransition_panGestureRecognizer;
+@property (nonatomic, strong) UIPanGestureRecognizer *__MLTransition_panGestureRecognizer;
 
-- (void)__MLBlackTransition_Hook_ViewDidLoad;
+- (void)__MLTransition_Hook_ViewDidLoad;
 
 @end
 
 #pragma mark - UINavigationController category implementation
-NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_GestureRecognizer";
+NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRecognizer";
 
-@implementation UINavigationController(__MLBlackTransition)
+@implementation UINavigationController(__MLTransition)
 
 #pragma mark getter and setter
-- (void)set__MLBlackTransition_panGestureRecognizer:(UIPanGestureRecognizer *)__MLBlackTransition_panGestureRecognizer
+- (void)set__MLTransition_panGestureRecognizer:(UIPanGestureRecognizer *)__MLTransition_panGestureRecognizer
 {
-    [self willChangeValueForKey:k__MLBlackTransition_GestureRecognizer];
-	objc_setAssociatedObject(self, &k__MLBlackTransition_GestureRecognizer, __MLBlackTransition_panGestureRecognizer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    [self didChangeValueForKey:k__MLBlackTransition_GestureRecognizer];
+    [self willChangeValueForKey:k__MLTransition_GestureRecognizer];
+	objc_setAssociatedObject(self, &k__MLTransition_GestureRecognizer, __MLTransition_panGestureRecognizer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self didChangeValueForKey:k__MLTransition_GestureRecognizer];
 }
 
-- (UIPanGestureRecognizer *)__MLBlackTransition_panGestureRecognizer
+- (UIPanGestureRecognizer *)__MLTransition_panGestureRecognizer
 {
-	return objc_getAssociatedObject(self, &k__MLBlackTransition_GestureRecognizer);
+	return objc_getAssociatedObject(self, &k__MLTransition_GestureRecognizer);
 }
 
 #pragma mark hook
-- (void)__MLBlackTransition_Hook_ViewDidLoad
+- (void)__MLTransition_Hook_ViewDidLoad
 {
-    [self __MLBlackTransition_Hook_ViewDidLoad];
+    [self __MLTransition_Hook_ViewDidLoad];
     
     //初始化拖返手势
-    if (!self.__MLBlackTransition_panGestureRecognizer&&[self.interactivePopGestureRecognizer.delegate isKindOfClass:[UIPercentDrivenInteractiveTransition class]]) {
+    if (!self.__MLTransition_panGestureRecognizer&&[self.interactivePopGestureRecognizer.delegate isKindOfClass:[UIPercentDrivenInteractiveTransition class]]) {
         UIPanGestureRecognizer *gestureRecognizer = nil;
 
 #define kHandleNavigationTransitionKey [@"nTShMTkyGzS2nJquqTyioyElLJ5mnKEco246" __mlDecryptString]
-        if (__MLBlackTransitionGestureRecognizerType == MLBlackTransitionGestureRecognizerTypeScreenEdgePan) {
+        if (__MLTransitionGestureRecognizerType == MLTransitionGestureRecognizerTypeScreenEdgePan) {
             gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:NSSelectorFromString(kHandleNavigationTransitionKey)];
             ((UIScreenEdgePanGestureRecognizer*)gestureRecognizer).edges = UIRectEdgeLeft;
         }else{
@@ -202,14 +202,14 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
         }
         
         gestureRecognizer.delegate = self;
-        gestureRecognizer.__MLBlackTransition_NavController = self;
+        gestureRecognizer.__MLTransition_NavController = self;
         
-        self.__MLBlackTransition_panGestureRecognizer = gestureRecognizer;
+        self.__MLTransition_panGestureRecognizer = gestureRecognizer;
         
         self.interactivePopGestureRecognizer.enabled = NO;
     }
     
-    [self.view addGestureRecognizer:self.__MLBlackTransition_panGestureRecognizer];
+    [self.view addGestureRecognizer:self.__MLTransition_panGestureRecognizer];
 }
 
 #pragma mark GestureRecognizer delegate
@@ -222,21 +222,21 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
     }
     
     UIView* view = recognizer.view;
-    if (view.disableMLBlackTransition) {
+    if (view.disableMLTransition) {
         return NO;
     }
     CGPoint loc = [recognizer locationInView:view];
     UIView* subview = [view hitTest:loc withEvent:nil];
     UIView *superView = subview;
     while (superView!=view) {
-        if (superView.disableMLBlackTransition) { //这个view忽略了拖返
+        if (superView.disableMLTransition) { //这个view忽略了拖返
             return NO;
         }
         superView = superView.superview;
     }
     
     //普通拖曳模式，如果开始方向不对即不启用
-    if (__MLBlackTransitionGestureRecognizerType==MLBlackTransitionGestureRecognizerTypePan){
+    if (__MLTransitionGestureRecognizerType==MLTransitionGestureRecognizerTypePan){
         CGPoint velocity = [recognizer velocityInView:navVC.view];
         if(velocity.x<=0) {
             //NSLog(@"不是右滑的");
@@ -257,19 +257,19 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
 }
 @end
 
-@implementation UINavigationController(DisableMLBlackTransition)
+@implementation UINavigationController(DisableMLTransition)
 
 #pragma mark - outcall
-- (void)enabledMLBlackTransition:(BOOL)enabled
+- (void)enabledMLTransition:(BOOL)enabled
 {
-    self.__MLBlackTransition_panGestureRecognizer.enabled = enabled;
+    self.__MLTransition_panGestureRecognizer.enabled = enabled;
 }
 
 @end
 
-@implementation MLBlackTransition
+@implementation MLTransition
 
-+ (void)validatePanPackWithMLBlackTransitionGestureRecognizerType:(MLBlackTransitionGestureRecognizerType)type
++ (void)validatePanPackWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type
 {
     //IOS7以下不可用
     if ([[[UIDevice currentDevice] systemVersion]floatValue]<7.0) {
@@ -280,9 +280,9 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         //设置记录type,并且执行hook
-        __MLBlackTransitionGestureRecognizerType = type;
+        __MLTransitionGestureRecognizerType = type;
         
-        __MLBlackTransition_Swizzle([UINavigationController class],@selector(viewDidLoad),@selector(__MLBlackTransition_Hook_ViewDidLoad));
+        __MLTransition_Swizzle([UINavigationController class],@selector(viewDidLoad),@selector(__MLTransition_Hook_ViewDidLoad));
     });
 }
 
@@ -310,7 +310,7 @@ NSString * const k__MLBlackTransition_GestureRecognizer = @"__MLBlackTransition_
                 return NO;
             }
         }
-        if (otherGestureRecognizer.__MLBlackTransition_NavController) {
+        if (otherGestureRecognizer.__MLTransition_NavController) {
             //说明这玩意是我们的手势
             return YES;
         }
