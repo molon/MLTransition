@@ -1,0 +1,14 @@
+PODS:
+  - MLTransition (1.0)
+
+DEPENDENCIES:
+  - MLTransition (from `../`)
+
+EXTERNAL SOURCES:
+  MLTransition:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  MLTransition: e8fec01e8985046e765ba7e2fc3b1bddc48f2522
+
+COCOAPODS: 0.37.2
