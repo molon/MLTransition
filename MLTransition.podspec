@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name         = "MLTransition"
-s.version      = "2.0.1"
+s.version      = "2.1.0"
 s.summary      = "iOS7+, pop ViewController with pan gesture from middle or edge of screen. "
 s.homepage     = "https://github.com/molon/MLTransition"
 s.license      = "MIT"

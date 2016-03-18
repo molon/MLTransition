@@ -13,3 +13,16 @@ The libirary uses a unpublish api(not private). But it's ok in my experience. My
 but if you use this library, tell me if you like. :)**
 
 ![MLTransition](https://raw.githubusercontent.com/molon/MLTransition/master/MLTransition.gif)
+
+
+# Usage  
+
+```
+- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOption{
+[MLTransition validatePanBackWithMLTransitionGestureRecognizerType:MLTransitionGestureRecognizerTypePan];//or MLTransitionGestureRecognizerTypeScreenEdgePan
+//...
+return YES;
+}
+
+```    
+
