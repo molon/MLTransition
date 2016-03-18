@@ -269,7 +269,7 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
 
 @implementation MLTransition
 
-+ (void)validatePanPackWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type
++ (void)validatePanBackWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type
 {
     //IOS7以下不可用
     if ([[[UIDevice currentDevice] systemVersion]floatValue]<7.0) {
@@ -299,18 +299,37 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     if ([gestureRecognizer isEqual:self.panGestureRecognizer]) {
-        //如果此scrollView有横向滚动的可能当然就需要忽略了。
-        if (CGAffineTransformEqualToTransform(CGAffineTransformMakeRotation(-M_PI*0.5),self.transform)||CGAffineTransformEqualToTransform(CGAffineTransformMakeRotation(M_PI*0.5),self.transform)) {
-//            if (self.contentSize.height>self.frame.size.width) {
-            //暂时对于这一种比较喜欢直接就不支持拖返吧，感觉体验好点。
-                return NO;
-//            }
-        }else{
-            if (self.contentSize.width>self.frame.size.width) {
-                return NO;
-            }
-        }
         if (otherGestureRecognizer.__MLTransition_NavController) {
+            if ([otherGestureRecognizer isMemberOfClass:[UIPanGestureRecognizer class]]) {
+                CGPoint location = [otherGestureRecognizer locationInView:otherGestureRecognizer.view];
+                if (location.x<=10.0f) { //中间拖返模式 时拖返手势的左边界10.0f内的位置需要无条件支持拖返（无论scrollView是横向还是竖向）
+                    return YES;
+                }
+                
+                //判断scrollView是否横向
+                BOOL(^isHorizontalBlock)(UIScrollView *) = ^(UIScrollView *scrollView){
+                    if (CGAffineTransformEqualToTransform(CGAffineTransformMakeRotation(-M_PI*0.5),scrollView.transform)||CGAffineTransformEqualToTransform(CGAffineTransformMakeRotation(M_PI*0.5),scrollView.transform)) {
+                        return YES;
+                    }else{
+                        if (scrollView.contentSize.width>scrollView.frame.size.width) {
+                            return YES;
+                        }
+                    }
+                    return NO;
+                };
+                
+                //如果此scrollView或者其某个上级view也是scrollView的时候，有一个是横向的，那就需要暂时禁用中间拖返手势，防止冲突
+                UIView *superview = self;
+//                while (superview&&![superview isKindOfClass:NSClassFromString(@"UINavigationTransitionView")]) {
+                while (superview&&![superview isEqual:otherGestureRecognizer.__MLTransition_NavController.view]) {
+                    if ([superview isKindOfClass:[UIScrollView class]]) {
+                        if (isHorizontalBlock((UIScrollView*)superview)) {
+                            return NO;
+                        }
+                    }
+                    superview = superview.superview;
+                }
+            }
             //说明这玩意是我们的手势
             return YES;
         }
