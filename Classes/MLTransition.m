@@ -12,34 +12,7 @@
 
 //设置一个默认的全局使用的type，默认是普通拖返模式
 static MLTransitionGestureRecognizerType __MLTransitionGestureRecognizerType = MLTransitionGestureRecognizerTypePan;
-
-#pragma mark - hook大法
-//静态就交换静态，实例方法就交换实例方法
-void __MLTransition_Swizzle(Class c, SEL origSEL, SEL newSEL)
-{
-    //获取实例方法
-    Method origMethod = class_getInstanceMethod(c, origSEL);
-    Method newMethod = nil;
-	if (!origMethod) {
-        //获取静态方法
-		origMethod = class_getClassMethod(c, origSEL);
-        newMethod = class_getClassMethod(c, newSEL);
-    }else{
-        newMethod = class_getInstanceMethod(c, newSEL);
-    }
-    
-    if (!origMethod||!newMethod) {
-        return;
-    }
-    
-    //自身已经有了就添加不成功，直接交换即可
-    if(class_addMethod(c, origSEL, method_getImplementation(newMethod), method_getTypeEncoding(newMethod))){
-        //添加成功一般情况是因为，origSEL本身是在c的父类里。这里添加成功了一个继承方法。
-        class_replaceMethod(c, newSEL, method_getImplementation(origMethod), method_getTypeEncoding(origMethod));
-    }else{
-        method_exchangeImplementations(origMethod, newMethod);
-	}
-}
+static BOOL __MLTransitionEnabled = NO;
 
 @interface NSString (__MLTransition_Encrypt)
 
@@ -185,14 +158,17 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
 }
 
 #pragma mark hook
-- (void)__MLTransition_Hook_ViewDidLoad
-{
-    [self __MLTransition_Hook_ViewDidLoad];
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    if (!__MLTransitionEnabled) {
+        return;
+    }
     
     //初始化拖返手势
     if (!self.__MLTransition_panGestureRecognizer&&[self.interactivePopGestureRecognizer.delegate isKindOfClass:[UIPercentDrivenInteractiveTransition class]]) {
         UIPanGestureRecognizer *gestureRecognizer = nil;
-
+        
 #define kHandleNavigationTransitionKey [@"nTShMTkyGzS2nJquqTyioyElLJ5mnKEco246" __mlDecryptString]
         if (__MLTransitionGestureRecognizerType == MLTransitionGestureRecognizerTypeScreenEdgePan) {
             gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:NSSelectorFromString(kHandleNavigationTransitionKey)];
@@ -215,6 +191,10 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
 #pragma mark GestureRecognizer delegate
 - (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)recognizer
 {
+    if (!__MLTransitionEnabled) {
+        return NO;
+    }
+    
     UINavigationController *navVC = self;
     if ([navVC.transitionCoordinator isAnimated]||
         navVC.viewControllers.count < 2) {
@@ -273,17 +253,20 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
 {
     //IOS7以下不可用
     if ([[[UIDevice currentDevice] systemVersion]floatValue]<7.0) {
+        __MLTransitionEnabled = NO;
         return;
     }
     
-    //启用hook，自动对每个导航器开启拖返功能，整个程序的生命周期只允许执行一次
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        //设置记录type,并且执行hook
-        __MLTransitionGestureRecognizerType = type;
+    //设置记录type
+    __MLTransitionGestureRecognizerType = type;
         
-        __MLTransition_Swizzle([UINavigationController class],@selector(viewDidLoad),@selector(__MLTransition_Hook_ViewDidLoad));
-    });
+    //打开开关
+    __MLTransitionEnabled = YES;
+}
+
++ (void)invalidate {
+    //关闭开关
+    __MLTransitionEnabled = NO;
 }
 
 @end

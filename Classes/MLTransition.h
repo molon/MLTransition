@@ -16,6 +16,7 @@ typedef enum {
 @interface MLTransition : NSObject
 
 + (void)validatePanBackWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type;
++ (void)invalidate;
 
 @end
 
