@@ -135,8 +135,6 @@ NSString * const kMLTransition_NavController_OfPan = @"__MLTransition_NavControl
  */
 @property (nonatomic, strong) UIPanGestureRecognizer *__MLTransition_panGestureRecognizer;
 
-- (void)__MLTransition_Hook_ViewDidLoad;
-
 @end
 
 #pragma mark - UINavigationController category implementation
