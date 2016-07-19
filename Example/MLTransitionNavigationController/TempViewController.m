@@ -7,12 +7,13 @@
 //
 
 #import "TempViewController.h"
+#import <MLTransition.h>
 
 @interface TempViewController ()<UINavigationControllerDelegate>
 
 @property (nonatomic, strong) UIButton *button;
 
-@property (nonatomic, assign) BOOL audoChangeNavBarHidden;
+@property (nonatomic, assign) BOOL autoChangeNavBarHidden;
 
 @end
 
@@ -64,7 +65,7 @@
     
     //测试2套-------------------------------------------
     //测试切换nav的隐藏后效果
-    self.audoChangeNavBarHidden = YES;
+    self.autoChangeNavBarHidden = YES;
     
     [self.view addSubview:self.button];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
@@ -81,7 +82,7 @@
 {
     [super viewWillAppear:animated];
     
-    if (self.audoChangeNavBarHidden) {
+    if (self.autoChangeNavBarHidden) {
         [[self navigationController] setNavigationBarHidden:[self.navigationController.viewControllers indexOfObject:self]%2==0 animated:animated];
     }
 }
