@@ -11,7 +11,9 @@ Support for iOS7+.
    
 Tips:    
 The libirary uses a unpublish api(not private). But it's ok in my experience. My app has been approved.
-     
+
+There is a sister libirary [MLNavigationBarTransition](https://github.com/molon/MLNavigationBarTransition)(Advanced navigation bar transition based on official push-pop transition)
+
 **My library does not seek any reward,
 but if you use this library, star it if you like. :)**
 
