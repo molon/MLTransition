@@ -249,7 +249,7 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
 
 + (void)validatePanBackWithMLTransitionGestureRecognizerType:(MLTransitionGestureRecognizerType)type
 {
-    //IOS7以下不可用
+    //iOS7以下不可用
     if ([[[UIDevice currentDevice] systemVersion]floatValue]<7.0) {
         __MLTransitionEnabled = NO;
         return;
