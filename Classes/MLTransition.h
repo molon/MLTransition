@@ -25,6 +25,9 @@ typedef enum {
 //使得此view不响应拖返
 @property (nonatomic, assign) BOOL disableMLTransition;
 
+//没有disableMLTransition的优先级高，但比较灵活的临时禁止拖返的回调
+@property (nonatomic, copy) BOOL (^disableMLTransitionBlock)();
+
 @end
 
 @interface UINavigationController(DisableMLTransition)

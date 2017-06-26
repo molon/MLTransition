@@ -67,19 +67,28 @@ static BOOL __MLTransitionEnabled = NO;
 @end
 
 #pragma mark - UIView category implementation
-NSString * const kMLTransition_UIView_DisableMLTransition = @"__MLTransition_UIView_DisableMLTransition";
 @implementation UIView(__MLTransition)
 
 - (BOOL)disableMLTransition
 {
-	return [objc_getAssociatedObject(self, &kMLTransition_UIView_DisableMLTransition) boolValue];
+	return [objc_getAssociatedObject(self, @selector(setDisableMLTransition:)) boolValue];
 }
 
 - (void)setDisableMLTransition:(BOOL)disableMLTransition
 {
-    [self willChangeValueForKey:kMLTransition_UIView_DisableMLTransition];
-	objc_setAssociatedObject(self, &kMLTransition_UIView_DisableMLTransition, @(disableMLTransition), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    [self didChangeValueForKey:kMLTransition_UIView_DisableMLTransition];
+    [self willChangeValueForKey:@"disableMLTransition"];
+	objc_setAssociatedObject(self, _cmd, @(disableMLTransition), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self didChangeValueForKey:@"disableMLTransition"];
+}
+
+- (void)setDisableMLTransitionBlock:(BOOL (^)())disableMLTransitionBlock {
+    [self willChangeValueForKey:@"disableMLTransitionBlock"];
+    objc_setAssociatedObject(self, _cmd, disableMLTransitionBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    [self didChangeValueForKey:@"disableMLTransitionBlock"];
+}
+
+- (BOOL (^)())disableMLTransitionBlock {
+    return objc_getAssociatedObject(self, @selector(setDisableMLTransitionBlock:));
 }
 
 @end
@@ -92,20 +101,18 @@ NSString * const kMLTransition_UIView_DisableMLTransition = @"__MLTransition_UIV
 @end
 
 #pragma mark - UIGestureRecognizer category implementation
-NSString * const kMLTransition_NavController_OfPan = @"__MLTransition_NavController_OfPan";
-
 @implementation UIGestureRecognizer(__MLTransition)
 
 - (void)set__MLTransition_NavController:(UINavigationController *)__MLTransition_NavController
 {
-    [self willChangeValueForKey:kMLTransition_NavController_OfPan];
-	objc_setAssociatedObject(self, &kMLTransition_NavController_OfPan, __MLTransition_NavController, OBJC_ASSOCIATION_ASSIGN);
-    [self didChangeValueForKey:kMLTransition_NavController_OfPan];
+    [self willChangeValueForKey:@"__MLTransition_NavController"];
+	objc_setAssociatedObject(self, _cmd, __MLTransition_NavController, OBJC_ASSOCIATION_ASSIGN);
+    [self didChangeValueForKey:@"__MLTransition_NavController"];
 }
 
 - (UIViewController *)__MLTransition_NavController
 {
-	return objc_getAssociatedObject(self, &kMLTransition_NavController_OfPan);
+	return objc_getAssociatedObject(self, @selector(set__MLTransition_NavController:));
 }
 
 @end
@@ -203,11 +210,20 @@ NSString * const k__MLTransition_GestureRecognizer = @"__MLTransition_GestureRec
     if (view.disableMLTransition) {
         return NO;
     }
+    if (view.disableMLTransitionBlock&&
+        view.disableMLTransitionBlock()) {
+        return NO;
+    }
+    
     CGPoint loc = [recognizer locationInView:view];
     UIView* subview = [view hitTest:loc withEvent:nil];
     UIView *superView = subview;
     while (superView!=view) {
         if (superView.disableMLTransition) { //这个view忽略了拖返
+            return NO;
+        }
+        if (superView.disableMLTransitionBlock&&
+            superView.disableMLTransitionBlock()) {
             return NO;
         }
         superView = superView.superview;
